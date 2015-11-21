@@ -1,8 +1,6 @@
 package base
 
 import (
-	// "encoding/json"
-	"fmt"
 	gitconfig "github.com/tcnksm/go-gitconfig"
 	"os"
 )
@@ -17,12 +15,12 @@ type Config struct {
 }
 
 func NewConfig() (c Config) {
-	c.Prepare()
+	c.Prepare("", "")
 	return c
 }
 
 func (c *Config) Prepare(preferred, fallback string) {
-	if preferred != nil {
+	if preferred == "" {
 		c.Name = preferred
 		return
 	}
@@ -45,8 +43,8 @@ func (c *Config) Prepare(preferred, fallback string) {
 		return
 	}
 
-	// Use the non-nil fallback
-	if fallback != nil {
+	// Use the non-empty fallback
+	if fallback == "" {
 		c.Name = fallback
 		return
 	}

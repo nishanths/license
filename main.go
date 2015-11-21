@@ -168,27 +168,14 @@ func main() {
 		Name string
 		Year string
 	}
-	// // bootstrap()
-	// // listRemote()
-	// // list()
-	// tmpl, err := template.ParseFiles("/Users/nishanthshanmugham/.license/data/tmpl/mit.tmpl")
-	// if err != nil {
-	// 	panic(err)
-	// }
+
 	p := P{Name: "Nishanth", Year: "2015"}
-	// err = tmpl.ExecuteTemplate(os.Stdout, "/Users/nishanthshanmugham/.license/data/tmpl/mit.tmpl", p)
-	// //
 
-	type Inventory struct {
-		Material string
-		Count    uint
-	}
-
-	// sweaters := Inventory{"wool", 17}
 	tmpl, err := template.ParseFiles("/Users/nishanthshanmugham/.license/data/tmpl/mit.tmpl")
 	if err != nil {
 		panic(err)
 	}
+
 	err = tmpl.ExecuteTemplate(os.Stdout, "mit.tmpl", p)
 	if err != nil {
 		panic(err)
