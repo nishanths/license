@@ -24,9 +24,6 @@ func (l *License) String() string {
 }
 
 func (l *License) TextTemplate() string {
-	// fmt.Println(PlaceholdersRx)
-	// fmt.Println(l.Body)
-	// fmt.Println(PlaceholdersRx.MatchString(l.Body))
 	return PlaceholdersRx.ReplaceAllStringFunc(l.Body, func(m string) string {
 		if s := PlaceholdersRx.FindStringSubmatch(m); s != nil && len(s) > 0 {
 			k := s[1]

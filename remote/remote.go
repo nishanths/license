@@ -2,7 +2,7 @@ package remote
 
 import (
 	"encoding/json"
-	"fmt"
+	// "fmt"
 	"github.com/google/go-querystring/query"
 	"github.com/nishanths/license/base"
 	"io/ioutil"

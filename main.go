@@ -11,17 +11,26 @@ import (
 	"github.com/nishanths/license/base"
 	"github.com/nishanths/license/console"
 	"github.com/nishanths/license/remote"
+	shutil "github.com/termie/go-shutil"
 	"io/ioutil"
 	"os"
 	"path"
-	// "text/template"
+	"text/template"
+)
+
+const (
+	tempDirectoryPrefix = "license-"
 )
 
 func permissionsFailed(p string) {
 	console.Error(fmt.Sprintf("Could not access %s. Make sure you have the permissions", p))
 }
 
-func created(p string) {
+func createPathFail(p string) {
+	console.Error(fmt.Sprintf("Failed to make %s. Make sure you have the permissions", p))
+}
+
+func createPathSuccess(p string) {
 	console.Info(fmt.Sprintf("Created %s", p))
 }
 
@@ -55,31 +64,34 @@ func bootstrap() {
 		return
 	}
 
-	// TODO: remove exisiting data only after successful bootstrap
-	defer func() {
-		fmt.Println("Bootstrap finished")
-	}()
+	tempLicensePath, err := ioutil.TempDir(os.TempDir(), tempDirectoryPrefix)
+	if err != nil {
+		createPathFail("temporary directory")
+		return
+	}
 
-	licensePath := path.Join(home, base.LicenseDirectory)
-	dataPath := path.Join(licensePath, base.DataDirectory)
+	dataPath := path.Join(tempLicensePath, base.DataDirectory)
 	rawPath := path.Join(dataPath, base.RawDirectory)
 	templatesPath := path.Join(dataPath, base.TemplatesDirectory)
 	listFilePath := path.Join(dataPath, base.ListFile)
 
-	if err := os.RemoveAll(licensePath); err != nil && os.IsPermission(err) {
-		permissionsFailed(licensePath)
-		return
-	}
+	// TODO: remove temp data on exit
+	defer func() {
+		console.Info("Cleaning up...")
+		console.Info(fmt.Sprintf("Removing temp directory %s", tempLicensePath))
+		os.RemoveAll(tempLicensePath)
+		console.Info("Bootstrap complete")
+	}()
 
 	// Create data directories
 	pathsToMake := []string{rawPath, templatesPath}
 	for _, p := range pathsToMake {
 		if err := os.MkdirAll(p, 0700); err != nil {
-			permissionsFailed(p)
+			createPathFail(p)
 			return
 		}
-		created(p)
 	}
+	createPathSuccess(fmt.Sprintf("temp directory %s", tempLicensePath))
 
 	// Fetch list from remote
 	licenses, err := remote.List()
@@ -87,6 +99,7 @@ func bootstrap() {
 		console.Error("Failed to make licenses list from api.github.com")
 		return
 	}
+	console.Info("Fetched license list from api.github.com")
 
 	// Serialize the list into JSON
 	// Write the serialized JSON to the list file
@@ -97,54 +110,87 @@ func bootstrap() {
 	}
 
 	if err := ioutil.WriteFile(listFilePath, serialized, 0700); err != nil {
-		console.Error(fmt.Sprintf("Failed to write %s", listFilePath))
+		createPathFail(listFilePath)
 		return
 	}
-	created(listFilePath)
 
 	fullLicenses := make([]base.License, 0)
 
 	// Fetch each license's full info
-	// Serialize, then write individual files to disk
+	// - Serialize to JSON and write to disk
+	// - Convert to text template and write to disk
 	for _, l := range licenses {
-		full, err := remote.Info(&l)
-		fmt.Fprintf(os.Stdout, full.Body)
+		fullLicense, err := remote.Info(&l)
 		if err != nil {
-			console.Error("Failed to fetch detailed license info")
+			console.Error("Failed to make detailed license info")
 			return
 		}
 
-		fullLicenses = append(fullLicenses, *full)
+		fullLicenses = append(fullLicenses, *fullLicense)
 
-		serialized, err := json.Marshal(full)
-
+		serialized, err := json.Marshal(fullLicense)
 		if err != nil {
 			console.Error(fmt.Sprintf("Failed to serialize licenses. Please file an issue: %s", base.RepositoryIssuesURL))
 			return
 		}
 
-		filePath := path.Join(rawPath, l.Key+".json")
-		if err := ioutil.WriteFile(filePath, serialized, 0700); err != nil {
-			console.Error(fmt.Sprintf("Failed to write %s", filePath))
+		rawFilePath := path.Join(rawPath, l.Key+".json")
+		if err := ioutil.WriteFile(rawFilePath, serialized, 0700); err != nil {
+			createPathFail(rawFilePath)
+			return
+		}
+
+		templateData := fullLicense.TextTemplate()
+		templateFilePath := path.Join(templatesPath, l.Key+".tmpl")
+		if err := ioutil.WriteFile(templateFilePath, []byte(templateData), 0700); err != nil {
+			createPathFail(templateFilePath)
 			return
 		}
 	}
 
-	fmt.Println(fullLicenses[0].TextTemplate())
+	// Remove exisitng path
+	realLicensePath := path.Join(home, base.LicenseDirectory)
+	if err := os.RemoveAll(realLicensePath); err != nil && os.IsPermission(err) {
+		permissionsFailed(realLicensePath)
+		return
+	}
 
-	// if err := os.RemoveAll(home + LicenseDirectory); err != nil && os.IsExist(err) {
-	// 	fmt.Println("did not find directory")
-	// 	// TODO:
-	// 	return
-	// }
-
-	// TODO: put files into data directory
+	// Copy temp data to real path
+	if err := shutil.CopyTree(tempLicensePath, realLicensePath, nil); err != nil {
+		console.Error(fmt.Sprintf("Failed to copy data to %s", realLicensePath))
+		return
+	}
+	createPathSuccess(fmt.Sprintf("and copied data to %s", realLicensePath))
 }
 
 func main() {
-	bootstrap()
-	// listRemote()
-	// list()
-	// tmpl, _ := template.New("sample").ParseFiles("sample")
-	// tmpl.Execute(os.Stdout, nil)
+	type P struct {
+		Name string
+		Year string
+	}
+	// // bootstrap()
+	// // listRemote()
+	// // list()
+	// tmpl, err := template.ParseFiles("/Users/nishanthshanmugham/.license/data/tmpl/mit.tmpl")
+	// if err != nil {
+	// 	panic(err)
+	// }
+	p := P{Name: "Nishanth", Year: "2015"}
+	// err = tmpl.ExecuteTemplate(os.Stdout, "/Users/nishanthshanmugham/.license/data/tmpl/mit.tmpl", p)
+	// //
+
+	type Inventory struct {
+		Material string
+		Count    uint
+	}
+
+	// sweaters := Inventory{"wool", 17}
+	tmpl, err := template.ParseFiles("/Users/nishanthshanmugham/.license/data/tmpl/mit.tmpl")
+	if err != nil {
+		panic(err)
+	}
+	err = tmpl.ExecuteTemplate(os.Stdout, "mit.tmpl", p)
+	if err != nil {
+		panic(err)
+	}
 }

@@ -10,9 +10,8 @@ import (
 )
 
 var Placeholders = map[string]string{
-	"year":           "Year",
-	"fullname":       "Name",
-	"name of author": "Name",
+	"year":     "Year",
+	"fullname": "Name",
 }
 
 var PlaceholdersRx *regexp.Regexp
@@ -22,7 +21,7 @@ func init() {
 	for key := range Placeholders {
 		keys = append(keys, key)
 	}
-	PlaceholdersRx = regexp.MustCompile("[<{\\[]{1,}(" + strings.Join(keys, "|") + ")[>}\\]]{1,}")
+	PlaceholdersRx = regexp.MustCompile("\\[(" + strings.Join(keys, "|") + ")\\]")
 }
 
 func read(filename string) ([]byte, error) {
