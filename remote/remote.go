@@ -2,10 +2,12 @@ package remote
 
 import (
 	"encoding/json"
-	// "fmt"
+	"fmt"
+	"github.com/google/go-querystring/query"
 	"github.com/nishanths/license/base"
 	"io/ioutil"
 	"net/http"
+	"os"
 )
 
 const (
@@ -14,9 +16,22 @@ const (
 	GitHubAPIAccept       = "application/vnd.github.drax-preview+json application/vnd.github.v3+json"
 )
 
+type option struct {
+	ClientID     string `url:"client_id"`
+	ClientSecret string `url:"client_secret"`
+}
+
 func do(req *http.Request) ([]byte, error) {
 	client := http.Client{}
+
 	req.Header.Add("Accept", GitHubAPIAccept)
+
+	v, err := query.Values(option{os.Getenv("GITHUB_CLIENT_ID"), os.Getenv("GITHUB_CLIENT_SECRET")})
+	if err != nil {
+		return nil, err
+	}
+
+	req.URL.RawQuery = v.Encode()
 
 	resp, err := client.Do(req)
 	defer resp.Body.Close()
@@ -47,7 +62,7 @@ func List() ([]base.License, error) {
 }
 
 func Info(l *base.License) (*base.License, error) {
-	req, err := http.NewRequest("GET", l.Url, nil)
+	req, err := http.NewRequest("GET", l.URL, nil)
 	if err != nil {
 		return nil, err
 	}

@@ -4,6 +4,10 @@ const (
 	LicenseConfigFile  = ".licenseconfig.json"
 	LicenseDirectory   = ".license"
 	DataDirectory      = "data"
-	ListFile           = "list.json"
+	ListFile           = "licenses.json"
+	RawDirectory       = "raw"
 	TemplatesDirectory = "tmpl"
+
+	RepositoryURL       = "github.com/nishanths/license"
+	RepositoryIssuesURL = RepositoryURL + "/issues"
 )
