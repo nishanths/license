@@ -7,20 +7,15 @@ import (
 
 const (
 	FullnameEnvVariable = "LICENSE_FULLNAME"
-	defaultName         = ""
+	defaultFullname     = ""
 )
 
 type Config struct {
 	Name string `json:"name"`
 }
 
-func NewConfig() (c Config) {
-	c.Prepare("", "")
-	return c
-}
-
 func (c *Config) Prepare(preferred, fallback string) {
-	if preferred == "" {
+	if preferred != "" {
 		c.Name = preferred
 		return
 	}
@@ -44,11 +39,11 @@ func (c *Config) Prepare(preferred, fallback string) {
 	}
 
 	// Use the non-empty fallback
-	if fallback == "" {
+	if fallback != "" {
 		c.Name = fallback
 		return
 	}
 
 	// Finally use the default
-	c.Name = defaultName
+	c.Name = defaultFullname
 }

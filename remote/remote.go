@@ -61,17 +61,18 @@ func List() ([]base.License, error) {
 	return licenses, nil
 }
 
-func Info(l *base.License) (*base.License, error) {
+func Info(l *base.License) (base.License, error) {
+	var full base.License
+
 	req, err := http.NewRequest("GET", l.URL, nil)
 	if err != nil {
-		return nil, err
+		return full, err
 	}
 
 	body, err := do(req)
-	var full base.License
 	if err := json.Unmarshal(body, &full); err != nil {
-		return nil, err
+		return full, err
 	}
 
-	return &full, nil
+	return full, nil
 }

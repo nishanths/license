@@ -1,10 +1,6 @@
 package base
 
 import (
-	"encoding/json"
-	homedir "github.com/mitchellh/go-homedir"
-	"io/ioutil"
-	"path"
 	"regexp"
 	"strings"
 )
@@ -22,32 +18,4 @@ func init() {
 		keys = append(keys, key)
 	}
 	PlaceholdersRx = regexp.MustCompile("\\[(" + strings.Join(keys, "|") + ")\\]")
-}
-
-func read(filename string) ([]byte, error) {
-	home, err := homedir.Dir()
-	if err != nil {
-		return nil, err
-	}
-
-	contents, err := ioutil.ReadFile(path.Join(home, filename))
-	if err != nil {
-		return nil, err
-	}
-	return contents, nil
-}
-
-func List() ([]License, error) {
-	licenses := make([]License, 0)
-
-	contents, err := read(path.Join(LicenseDirectory, DataDirectory, ListFile))
-	if err != nil {
-		return nil, err
-	}
-
-	if err := json.Unmarshal(contents, &licenses); err != nil {
-		return nil, err
-	}
-
-	return licenses, nil
 }

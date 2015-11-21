@@ -20,14 +20,16 @@ type License struct {
 }
 
 func (l *License) String() string {
-	return fmt.Sprintf("Key: %s, Name: %s", l.Key, l.Name)
+	return fmt.Sprintf("{ Key: %s, Name: %s }", l.Key, l.Name)
 }
 
 func (l *License) TextTemplate() string {
 	return PlaceholdersRx.ReplaceAllStringFunc(l.Body, func(m string) string {
 		if s := PlaceholdersRx.FindStringSubmatch(m); s != nil && len(s) > 0 {
 			k := s[1]
-			return "{{." + Placeholders[k] + "}}"
+			if v, exists := Placeholders[k]; exists {
+				return "{{." + v + "}}"
+			}
 		}
 
 		return m

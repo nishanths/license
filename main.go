@@ -10,12 +10,13 @@ import (
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/nishanths/license/base"
 	"github.com/nishanths/license/console"
+	"github.com/nishanths/license/local"
 	"github.com/nishanths/license/remote"
 	shutil "github.com/termie/go-shutil"
 	"io/ioutil"
 	"os"
 	"path"
-	"text/template"
+	// "text/template"
 )
 
 const (
@@ -42,14 +43,21 @@ func update() {
 
 }
 
-func listRemote() {
-	a, _ := remote.List()
-	fmt.Println(a)
+func list(fn func() ([]base.License, error)) {
+	licenses, err := fn()
+	if err != nil {
+		console.Error(fmt.Sprintf("Failed to list licenses. Run `$ license bootstrap` before trying again. Otherwise, please create an Issue: %s", base.RepositoryIssuesURL))
+		return
+	}
+	base.RenderList(&licenses)
 }
 
-func list() {
-	a, _ := base.List()
-	fmt.Println(a)
+func listRemote() {
+	list(remote.List)
+}
+
+func listLocal() {
+	list(local.List)
 }
 
 func help() {
@@ -75,7 +83,6 @@ func bootstrap() {
 	templatesPath := path.Join(dataPath, base.TemplatesDirectory)
 	listFilePath := path.Join(dataPath, base.ListFile)
 
-	// TODO: remove temp data on exit
 	defer func() {
 		console.Info("Cleaning up...")
 		console.Info(fmt.Sprintf("Removing temp directory %s", tempLicensePath))
@@ -105,7 +112,7 @@ func bootstrap() {
 	// Write the serialized JSON to the list file
 	serialized, err := json.Marshal(licenses)
 	if err != nil {
-		console.Error(fmt.Sprintf("Failed to serialize licenses. Please file an issue: %s", base.RepositoryIssuesURL))
+		console.Error(fmt.Sprintf("Failed to serialize licenses. Please create an Issue: %s", base.RepositoryIssuesURL))
 		return
 	}
 
@@ -126,7 +133,7 @@ func bootstrap() {
 			return
 		}
 
-		fullLicenses = append(fullLicenses, *fullLicense)
+		fullLicenses = append(fullLicenses, fullLicense)
 
 		serialized, err := json.Marshal(fullLicense)
 		if err != nil {
@@ -163,21 +170,20 @@ func bootstrap() {
 	createPathSuccess(fmt.Sprintf("and copied data to %s", realLicensePath))
 }
 
+func render() {
+	var c base.Config
+	c.Prepare("Nishanth Shanmugham", "")
+	o := base.NewOption(c.Name)
+
+	var l base.License
+	l.Key = "isc"
+
+	tmpl, _ := local.Template(&l)
+	base.RenderTemplate(tmpl, &o)
+}
+
 func main() {
-	type P struct {
-		Name string
-		Year string
-	}
-
-	p := P{Name: "Nishanth", Year: "2015"}
-
-	tmpl, err := template.ParseFiles("/Users/nishanthshanmugham/.license/data/tmpl/mit.tmpl")
-	if err != nil {
-		panic(err)
-	}
-
-	err = tmpl.ExecuteTemplate(os.Stdout, "mit.tmpl", p)
-	if err != nil {
-		panic(err)
-	}
+	// listRemote()
+	// listLocal()
+	render()
 }
