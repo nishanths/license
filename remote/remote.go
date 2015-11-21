@@ -9,51 +9,54 @@ import (
 )
 
 const (
-	GH_API_BASE        = "https://api.github.com"
-	GH_LICENSES_PATH   = "/licenses"
-	GH_LICENSES_ACCEPT = "application/vnd.github.drax-preview+json application/vnd.github.v3+json"
+	GitHubAPIBaseURL      = "https://api.github.com"
+	GitHubAPILicensesPath = "/licenses"
+	GitHubAPIAccept       = "application/vnd.github.drax-preview+json application/vnd.github.v3+json"
 )
 
-type LicensesResult struct {
-	Licenses *[]base.License
-	Error    error
-}
-
-func FetchLicensesList(ch chan *LicensesResult) {
-	client := &http.Client{}
-
-	req, err := http.NewRequest("GET", GH_API_BASE+GH_LICENSES_PATH, nil)
-	if err != nil {
-		ch <- &LicensesResult{nil, err}
-	}
-
-	req.Header.Add("Accept", GH_LICENSES_ACCEPT)
+func do(req *http.Request) ([]byte, error) {
+	client := http.Client{}
+	req.Header.Add("Accept", GitHubAPIAccept)
 
 	resp, err := client.Do(req)
 	defer resp.Body.Close()
 	if err != nil {
-		ch <- &LicensesResult{nil, err}
+		return nil, err
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		ch <- &LicensesResult{nil, err}
+		return nil, err
 	}
-
-	licenses := make([]base.License, 0)
-	json.Unmarshal(body, &licenses)
-	ch <- &LicensesResult{&licenses, err}
+	return body, nil
 }
 
-func UpdateLicense() {
-	// fetchCh := make(chan *LicensesResult)
+func List() ([]base.License, error) {
+	req, err := http.NewRequest("GET", GitHubAPIBaseURL+GitHubAPILicensesPath, nil)
+	if err != nil {
+		return nil, err
+	}
 
-	// go FetchLicensesList(fetchCh)
+	body, err := do(req)
 
-	// lr := <-fetchCh
-	// if lr.Error != nil {
-	// 	return
-	// }
+	licenses := make([]base.License, 0)
+	if err := json.Unmarshal(body, &licenses); err != nil {
+		return nil, err
+	}
+	return licenses, nil
+}
 
-	// fmt.Println(*lr.Licenses)
+func Info(l *base.License) (*base.License, error) {
+	req, err := http.NewRequest("GET", l.Url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	body, err := do(req)
+	var full base.License
+	if err := json.Unmarshal(body, &full); err != nil {
+		return nil, err
+	}
+
+	return &full, nil
 }

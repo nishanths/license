@@ -7,18 +7,19 @@ package main
 import (
 	"fmt"
 	homedir "github.com/mitchellh/go-homedir"
-	// "github.com/nishanths/license/base"
+	"github.com/nishanths/license/base"
+	"github.com/nishanths/license/console"
 	"github.com/nishanths/license/remote"
 	"os"
+	"path"
 	// "text/template"
 )
 
-const (
-	LICENSE_CONFIG_FILE = ".licenseconfig"
-	LICENSE_DIRECTORY   = ".license"
-)
+func permissionsFailed(p string) {
+	console.Error(fmt.Sprintf("Could not access %s. Make sure you have the permissions.", p))
+}
 
-func generate() {
+func generate(n string) {
 
 }
 
@@ -27,22 +28,13 @@ func update() {
 }
 
 func listRemote() {
-	ch := make(chan *remote.LicensesResult)
-	go remote.FetchLicensesList(ch)
-
-	res := <-ch
-
-	if res.Error != nil {
-		fmt.Println("ls-remote had a fetch result error")
-		return
-	}
-
-	// TODO: format
-	fmt.Println(res.Licenses)
+	a, _ := remote.List()
+	fmt.Println(a)
 }
 
 func list() {
-
+	a, _ := base.List()
+	fmt.Println(a)
 }
 
 func help() {
@@ -51,33 +43,48 @@ func help() {
 
 func bootstrap() {
 	home, err := homedir.Dir()
-
 	if err != nil {
-		fmt.Println("did not find home")
-		// TODO: bootstrap failed
+		console.Error("Unable to locate home directory.")
 		return
 	}
 
-	err = os.Remove(home + LICENSE_CONFIG_FILE)
-	if err != nil && os.IsExist(err) {
-		fmt.Println("did not find config dotfile")
-		// TODO:
+	licensePath := path.Join(home, base.LicenseDirectory)
+	if err := os.RemoveAll(licensePath); err != nil && os.IsPermission(err) {
+		permissionsFailed(licensePath)
 		return
 	}
+	console.Info(fmt.Sprintf("Removed %s", licensePath))
 
-	err = os.RemoveAll(home + LICENSE_DIRECTORY)
-	if err != nil && os.IsExist(err) {
-		fmt.Println("did not find directory")
-		// TODO:
-		return
+	pathsToMake := []string{path.Join(home, base.LicenseDirectory, base.DataDirectory, base.TemplatesDirectory)}
+	for _, p := range pathsToMake {
+		if err := os.MkdirAll(p, 0700); err != nil {
+			permissionsFailed(p)
+			return
+		}
+		console.Info(fmt.Sprintf("Created %s", p))
 	}
 
-	// TODO
+	licenses, err := remote.List()
+	if err != nil {
+		console.Error("Failed to fetch licenses list from api.github.com.")
+	}
+
+	info, _ := remote.Info(&licenses[0])
+	fmt.Println(info)
+
+	// if err := os.RemoveAll(home + LicenseDirectory); err != nil && os.IsExist(err) {
+	// 	fmt.Println("did not find directory")
+	// 	// TODO:
+	// 	return
+	// }
+
+	// TODO: put files into data directory
 }
 
 func main() {
 	bootstrap()
-	listRemote()
+	// listRemote()
+	// list()
 	// tmpl, _ := template.New("sample").ParseFiles("sample")
 	// tmpl.Execute(os.Stdout, nil)
 }
