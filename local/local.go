@@ -22,13 +22,13 @@ func read(filename string) ([]byte, error) {
 	return contents, nil
 }
 
-func Template(l *base.License) (*template.Template, error) {
+func Template(key string) (*template.Template, error) {
 	home, err := homedir.Dir()
 	if err != nil {
 		return nil, err
 	}
 
-	tmpl, err := template.ParseFiles(path.Join(home, base.LicenseDirectory, base.DataDirectory, base.TemplatesDirectory, l.Key+".tmpl"))
+	tmpl, err := template.ParseFiles(path.Join(home, base.LicenseDirectory, base.DataDirectory, base.TemplatesDirectory, key+".tmpl"))
 	if err != nil {
 		return nil, err
 	}

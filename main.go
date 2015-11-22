@@ -6,6 +6,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/nishanths/license/base"
@@ -16,12 +17,18 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+	"strings"
+	"time"
 	// "text/template"
 )
 
 const (
 	tempDirectoryPrefix = "license-"
 )
+
+func listFailed() {
+	console.Error(fmt.Sprintf("license: failed to fetch available licenses: run `$ license bootstrap` before trying again."))
+}
 
 func permissionsFailed(p string) {
 	console.Error(fmt.Sprintf("Could not access %s. Make sure you have the permissions", p))
@@ -35,8 +42,20 @@ func createPathSuccess(p string) {
 	console.Info(fmt.Sprintf("Created %s", p))
 }
 
-func generate(n string) {
+func generate(target string) bool {
+	licenses, err := local.List()
+	if err != nil {
+		listFailed()
+		return false
+	}
 
+	for _, l := range licenses {
+		if l.Key == target || l.Name == target {
+			return render(l.Key)
+		}
+	}
+
+	return false
 }
 
 func update() {
@@ -46,7 +65,7 @@ func update() {
 func list(fn func() ([]base.License, error)) {
 	licenses, err := fn()
 	if err != nil {
-		console.Error(fmt.Sprintf("Failed to list licenses. Run `$ license bootstrap` before trying again. Otherwise, please create an Issue: %s", base.RepositoryIssuesURL))
+		listFailed()
 		return
 	}
 	base.RenderList(&licenses)
@@ -64,18 +83,18 @@ func help() {
 
 }
 
-func bootstrap() {
+func bootstrap() bool {
 	// Bail immediately if we cannot find the user's home directory
 	home, err := homedir.Dir()
 	if err != nil {
 		console.Error("Unable to locate home directory")
-		return
+		return false
 	}
 
 	tempLicensePath, err := ioutil.TempDir(os.TempDir(), tempDirectoryPrefix)
 	if err != nil {
 		createPathFail("temporary directory")
-		return
+		return false
 	}
 
 	dataPath := path.Join(tempLicensePath, base.DataDirectory)
@@ -95,7 +114,7 @@ func bootstrap() {
 	for _, p := range pathsToMake {
 		if err := os.MkdirAll(p, 0700); err != nil {
 			createPathFail(p)
-			return
+			return false
 		}
 	}
 	createPathSuccess(fmt.Sprintf("temp directory %s", tempLicensePath))
@@ -104,7 +123,7 @@ func bootstrap() {
 	licenses, err := remote.List()
 	if err != nil {
 		console.Error("Failed to make licenses list from api.github.com")
-		return
+		return false
 	}
 	console.Info("Fetched license list from api.github.com")
 
@@ -112,13 +131,13 @@ func bootstrap() {
 	// Write the serialized JSON to the list file
 	serialized, err := json.Marshal(licenses)
 	if err != nil {
-		console.Error(fmt.Sprintf("Failed to serialize licenses. Please create an Issue: %s", base.RepositoryIssuesURL))
-		return
+		console.Error(fmt.Sprintf("Failed to serialize licenses. Please create an issue: %s", base.RepositoryIssuesURL))
+		return false
 	}
 
 	if err := ioutil.WriteFile(listFilePath, serialized, 0700); err != nil {
 		createPathFail(listFilePath)
-		return
+		return false
 	}
 
 	fullLicenses := make([]base.License, 0)
@@ -130,7 +149,7 @@ func bootstrap() {
 		fullLicense, err := remote.Info(&l)
 		if err != nil {
 			console.Error("Failed to make detailed license info")
-			return
+			return false
 		}
 
 		fullLicenses = append(fullLicenses, fullLicense)
@@ -138,20 +157,20 @@ func bootstrap() {
 		serialized, err := json.Marshal(fullLicense)
 		if err != nil {
 			console.Error(fmt.Sprintf("Failed to serialize licenses. Please file an issue: %s", base.RepositoryIssuesURL))
-			return
+			return false
 		}
 
 		rawFilePath := path.Join(rawPath, l.Key+".json")
 		if err := ioutil.WriteFile(rawFilePath, serialized, 0700); err != nil {
 			createPathFail(rawFilePath)
-			return
+			return false
 		}
 
 		templateData := fullLicense.TextTemplate()
 		templateFilePath := path.Join(templatesPath, l.Key+".tmpl")
 		if err := ioutil.WriteFile(templateFilePath, []byte(templateData), 0700); err != nil {
 			createPathFail(templateFilePath)
-			return
+			return false
 		}
 	}
 
@@ -159,31 +178,71 @@ func bootstrap() {
 	realLicensePath := path.Join(home, base.LicenseDirectory)
 	if err := os.RemoveAll(realLicensePath); err != nil && os.IsPermission(err) {
 		permissionsFailed(realLicensePath)
-		return
+		return false
 	}
 
 	// Copy temp data to real path
 	if err := shutil.CopyTree(tempLicensePath, realLicensePath, nil); err != nil {
 		console.Error(fmt.Sprintf("Failed to copy data to %s", realLicensePath))
-		return
+		return false
 	}
 	createPathSuccess(fmt.Sprintf("and copied data to %s", realLicensePath))
+
+	return true
 }
 
-func render() {
+func render(key string) bool {
 	var c base.Config
-	c.Prepare("Nishanth Shanmugham", "")
+	c.Prepare("", "")
 	o := base.NewOption(c.Name)
 
-	var l base.License
-	l.Key = "isc"
+	tmpl, err := local.Template(key)
+	if err != nil {
+		// TODO: error message
+		return false
+	}
 
-	tmpl, _ := local.Template(&l)
 	base.RenderTemplate(tmpl, &o)
+	return true
 }
 
 func main() {
-	// listRemote()
-	// listLocal()
-	render()
+	args := os.Args[1:]
+	commandArg := args[0]
+
+	switch strings.ToLower(commandArg) {
+	case "use":
+		if len(args) < 2 {
+			fmt.Println("license: expected: license name")
+		} else {
+			licenseName := strings.ToLower(strings.TrimSpace(args[1]))
+			if generate(licenseName) {
+				os.Exit(0)
+			} else {
+				os.Exit(1)
+			}
+		}
+		fallthrough
+	case "generate":
+
+	case "config":
+
+	case "help":
+	}
+
+	// You can get individual args with normal indexing.
+	// arg := os.Args[3]
+
+	fmt.Println(args)
+	// fmt.Println(arg)
+
+	name := flag.String("name", "", "Full name on license")
+	year := flag.Int("year", time.Now().Year(), "Year on license")
+
+	// flag.NewFlagSet("name", flag.ExitOnError)
+	flag.Parse()
+
+	fmt.Println("name:", *name)
+	fmt.Println("year:", *year)
+	fmt.Println("tail:", flag.Args())
 }

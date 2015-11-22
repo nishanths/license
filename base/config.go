@@ -27,13 +27,13 @@ func (c *Config) Prepare(preferred, fallback string) {
 	}
 
 	// Attempt to use local gitconfig for name
-	if name, err := gitconfig.Username(); err != nil {
+	if name, err := gitconfig.Username(); err == nil {
 		c.Name = name
 		return
 	}
 
 	// Attempt to use global gitconfig for name
-	if name, err := gitconfig.Global("user.name"); err != nil {
+	if name, err := gitconfig.Global("user.name"); err == nil {
 		c.Name = name
 		return
 	}

@@ -3,18 +3,17 @@ package base
 import (
 	"fmt"
 	"os"
-	"strconv"
 	"text/template"
 	"time"
 )
 
 type Option struct {
-	Year string
+	Year int
 	Name string
 }
 
 func NewOption(n string) (o Option) {
-	o.Year = strconv.Itoa(time.Now().Year())
+	o.Year = time.Now().Year()
 	o.Name = n
 	return
 }
