@@ -2,6 +2,7 @@ package base
 
 import (
 	"fmt"
+	"math"
 	"os"
 	"text/template"
 	"time"
@@ -19,11 +20,12 @@ func NewOption(n string) (o Option) {
 }
 
 func singleFormatString(l *License) string {
-	return fmt.Sprintf("* %s (%s)", l.Key, l.Name)
+	return fmt.Sprintf("   %s (%s)", l.Key, l.Name)
 }
 
-func RenderList(licenses *[]License) {
+func RenderList(licenses *[]License, ms time.Duration) {
 	for _, l := range *licenses {
+		time.Sleep(ms * time.Duration(math.Pow(float64(10), float64(6))))
 		fmt.Println(singleFormatString(&l))
 	}
 }
