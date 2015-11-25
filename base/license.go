@@ -19,6 +19,20 @@ type License struct {
 	Body           string   `json:"body"`
 }
 
+type ByLicenseKey []License
+
+func (a ByLicenseKey) Len() int {
+	return len(a)
+}
+
+func (a ByLicenseKey) Swap(i, j int) {
+	a[i], a[j] = a[j], a[i]
+}
+
+func (a ByLicenseKey) Less(i, j int) bool {
+	return a[i].Key < a[j].Key
+}
+
 func (l *License) String() string {
 	return fmt.Sprintf("{ Key: %s, Name: %s }", l.Key, l.Name)
 }

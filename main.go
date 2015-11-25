@@ -19,7 +19,6 @@ import (
 	"path"
 	"strings"
 	"time"
-	// "text/template"
 )
 
 const (
@@ -43,16 +42,38 @@ func createPathSuccess(p string) {
 	console.Info(fmt.Sprintf("Created %s", p))
 }
 
-func generate(target string) bool {
+func generate(args []string) bool {
+	if len(args) < 1 {
+		// TODO: print error message
+		return false
+	}
+
+	fullname := ""
+	year := time.Now().Year()
+
+	if len(args) > 2 {
+		generateSet := flag.NewFlagSet("generate", flag.ExitOnError)
+		generateSet.StringVar(&fullname, "name", "", "Specify ull name to use on license")
+		generateSet.IntVar(&year, "year", time.Now().Year(), "Specify year to use of license")
+
+		err := generateSet.Parse(args[1:])
+		if err != nil {
+			// TODO: print error
+			return false
+		}
+	}
+
+	licenseName := strings.ToLower(args[0])
 	licenses, err := local.List()
+
 	if err != nil {
 		listFailed()
 		return false
 	}
 
 	for _, l := range licenses {
-		if l.Key == target || l.Name == target {
-			return render(l.Key)
+		if l.Key == licenseName || l.Name == licenseName {
+			return render(l.Key, fullname, year)
 		}
 	}
 
@@ -217,20 +238,29 @@ type helpline struct {
 }
 
 func (l *helpline) String() string {
-	return fmt.Sprintf("   %-12s%-10s", l.Command, l.Description)
+	return fmt.Sprintf("   %-16s%s", l.Command, l.Description)
 }
 
 func help() bool {
 	commands := []helpline{
-		{"make", "Generate the specified license"},
+		{"<license-name>", "Generate the specified license"},
 		{"config", "Configure application globals"},
 		{"help", "Show help information"},
-		{"list", "List available licenses"},
+		{"list", "List available licenses, local or remote"},
 		{"update", "Update local data with latest online licenses"},
 		{"version", "Print current version"},
 	}
 
-	fmt.Printf("usage: license <license-name|command> [<args>]\n\n")
+	fmt.Printf("license - generate a license from the command-line\n\n")
+
+	fmt.Printf("Usage:\n")
+	fmt.Printf("  license <license-name|command> [<args>]\n\n")
+
+	fmt.Printf("Examples:\n")
+	fmt.Printf("  license mit\n")
+	fmt.Printf("  license mit > LICENSE.txt\n")
+	fmt.Printf("  license gpl-2.0 -o LICENSE.md\n\n")
+
 	fmt.Printf("Available commands:\n")
 	for _, c := range commands {
 		fmt.Println(&c)
@@ -275,10 +305,13 @@ func config(args []string) bool {
 	return true
 }
 
-func render(key string) bool {
+func render(key, fullname string, year int) bool {
 	var c base.Config
-	c.Prepare("", "")
-	o := base.NewOption(c.Name)
+	c.Prepare(fullname, "")
+
+	var o base.Option
+	o.Name = c.Name
+	o.Year = year
 
 	tmpl, err := local.Template(key)
 	if err != nil {
@@ -300,7 +333,7 @@ func main() {
 	} else {
 		first := args[0]
 
-		switch strings.ToLower(first) {
+		switch first {
 		case "config":
 			success = config(args[1:])
 		case "help":
@@ -311,21 +344,14 @@ func main() {
 			success = list(args[1:])
 		case "update":
 			success = update()
+		case "make":
+			fallthrough
 		case "use":
 			fallthrough
 		case "generate":
-			fallthrough
-		case "make":
-			if len(args) < 2 {
-				fmt.Println("license: expected: license name")
-			} else {
-				licenseName := strings.ToLower(strings.TrimSpace(args[1]))
-				if generate(licenseName) {
-					os.Exit(0)
-				} else {
-					os.Exit(1)
-				}
-			}
+			success = generate(args[1:])
+		default:
+			// TODO: handle unknown command
 		}
 	}
 
@@ -334,20 +360,4 @@ func main() {
 	}
 
 	os.Exit(0)
-
-	// You can get individual args with normal indexing.
-	// arg := os.Args[3]
-
-	fmt.Println(args)
-	// fmt.Println(arg)
-
-	name := flag.String("name", "", "Full name on license")
-	year := flag.Int("year", time.Now().Year(), "Year on license")
-
-	// flag.NewFlagSet("name", flag.ExitOnError)
-	flag.Parse()
-
-	fmt.Println("name:", *name)
-	fmt.Println("year:", *year)
-	fmt.Println("tail:", flag.Args())
 }

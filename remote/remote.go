@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"sort"
 )
 
 const (
@@ -58,6 +59,8 @@ func List() ([]base.License, error) {
 	if err := json.Unmarshal(body, &licenses); err != nil {
 		return nil, err
 	}
+
+	sort.Sort(base.ByLicenseKey(licenses))
 	return licenses, nil
 }
 

@@ -20,7 +20,7 @@ func NewOption(n string) (o Option) {
 }
 
 func singleFormatString(l *License) string {
-	return fmt.Sprintf("   %s (%s)", l.Key, l.Name)
+	return fmt.Sprintf("%-15s(%s)", l.Key, l.Name)
 }
 
 func RenderList(licenses *[]License, ms time.Duration) {

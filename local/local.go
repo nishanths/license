@@ -6,6 +6,7 @@ import (
 	"github.com/nishanths/license/base"
 	"io/ioutil"
 	"path"
+	"sort"
 	"text/template"
 )
 
@@ -41,13 +42,14 @@ func List() ([]base.License, error) {
 
 	contents, err := read(path.Join(base.LicenseDirectory, base.DataDirectory, base.ListFile))
 	if err != nil {
-		return licenses, err
+		return nil, err
 	}
 
 	if err := json.Unmarshal(contents, &licenses); err != nil {
-		return licenses, err
+		return nil, err
 	}
 
+	sort.Sort(base.ByLicenseKey(licenses))
 	return licenses, nil
 }
 
