@@ -1,7 +1,3 @@
-// license generates the text for a license of your choice
-// Usage: license <license-name>
-// Example: license mit
-
 package main
 
 import (
@@ -14,6 +10,7 @@ import (
 	"github.com/nishanths/license/local"
 	"github.com/nishanths/license/remote"
 	shutil "github.com/termie/go-shutil"
+	"io"
 	"io/ioutil"
 	"os"
 	"path"
@@ -42,23 +39,64 @@ func createPathSuccess(p string) {
 	console.Info(fmt.Sprintf("Created %s", p))
 }
 
+func render(key, fullname string, year int, w io.Writer) bool {
+	var c base.Config
+	c.Prepare(fullname, "")
+
+	var o base.Option
+	o.Name = c.Name
+	o.Year = year
+
+	tmpl, err := local.Template(key)
+	if err != nil {
+		// TODO: error message
+		return false
+	}
+
+	base.RenderTemplate(tmpl, &o, w)
+	return true
+}
+
 func generate(args []string) bool {
 	if len(args) < 1 {
 		// TODO: print error message
 		return false
 	}
 
-	fullname := ""
+	name := ""
 	year := time.Now().Year()
+	output := ""
+	var f *os.File
 
 	if len(args) > 2 {
+		var c base.Config
+		c.Prepare("", "")
+
 		generateSet := flag.NewFlagSet("generate", flag.ExitOnError)
-		generateSet.StringVar(&fullname, "name", "", "Specify ull name to use on license")
+
+		generateSet.StringVar(&name, "n", c.Name, "Specify name to use on license")
+		generateSet.StringVar(&name, "name", c.Name, "Specify name to use on license")
+
+		generateSet.IntVar(&year, "y", time.Now().Year(), "Specify year to use of license")
 		generateSet.IntVar(&year, "year", time.Now().Year(), "Specify year to use of license")
+
+		generateSet.StringVar(&output, "o", "", "Specify output file name")
+		generateSet.StringVar(&output, "output", "", "Specify output file name")
 
 		err := generateSet.Parse(args[1:])
 		if err != nil {
 			// TODO: print error
+			return false
+		}
+	}
+
+	if output == "" {
+		f = os.Stdout
+	} else {
+		var err error
+		f, err = os.Create("./" + output)
+		if err != nil {
+			// TODO: error message
 			return false
 		}
 	}
@@ -73,7 +111,7 @@ func generate(args []string) bool {
 
 	for _, l := range licenses {
 		if l.Key == licenseName || l.Name == licenseName {
-			return render(l.Key, fullname, year)
+			return render(l.Key, name, year, f)
 		}
 	}
 
@@ -189,143 +227,90 @@ func update() bool {
 }
 
 func version() bool {
-	fmt.Println("v" + applicationVersion)
+	fmt.Println(applicationVersion)
 	return true
 }
 
-func list(args []string) bool {
-	listSet := flag.NewFlagSet("list", flag.ExitOnError)
-	var local bool
-	listSet.BoolVar(&local, "local", true, "List all licenses stored locally")
-	remote := listSet.Bool("remote", false, "List all licenses from api.github.com")
-
-	err := listSet.Parse(args)
-	if err != nil {
-		return false
-	}
-
-	if *remote {
-		return listRemote()
-	} else if local {
-		return listLocal()
-	}
-
-	return false
-}
-
-func listHelper(fn func() ([]base.License, error), ms time.Duration) bool {
+func listHelper(fn func() ([]base.License, error)) bool {
 	licenses, err := fn()
 	if err != nil {
 		listFailed()
 		return false
 	}
 
-	base.RenderList(&licenses, ms)
+	base.RenderList(&licenses)
+	fmt.Println()
 	return true
 }
 
 func listRemote() bool {
-	return listHelper(remote.List, 0)
+	fmt.Println("Available licenses (remote):\n")
+	return listHelper(remote.List)
 }
 
 func listLocal() bool {
-	return listHelper(local.List, 0)
+	fmt.Println("Available licenses (local):\n")
+	return listHelper(local.List)
 }
 
-type helpline struct {
+type usageLine struct {
 	Command     string
 	Description string
 }
 
-func (l *helpline) String() string {
-	return fmt.Sprintf("   %-16s%s", l.Command, l.Description)
+type exampleLine usageLine
+
+func (l *usageLine) String() string {
+	return fmt.Sprintf("   %-28s%s", l.Command, l.Description)
+}
+
+func (l *exampleLine) String() string {
+	return fmt.Sprintf("   %-40s%s", l.Command, l.Description)
 }
 
 func help() bool {
-	commands := []helpline{
-		{"<license-name>", "Generate the specified license"},
-		{"config", "Configure application globals"},
+	// Heading
+	fmt.Println("Command-line license generator")
+	fmt.Println()
+
+	// Note
+	fmt.Println("Note:")
+	fmt.Println("  <license-name> refers to any license name listed in `license ls`")
+
+	fmt.Println()
+
+	// Usage
+	fmt.Println("Usage:")
+	for _, c := range []usageLine{
 		{"help", "Show help information"},
-		{"list", "List available licenses, local or remote"},
-		{"update", "Update local data with latest online licenses"},
-		{"version", "Print current version"},
-	}
-
-	fmt.Printf("license - generate a license from the command-line\n\n")
-
-	fmt.Printf("Usage:\n")
-	fmt.Printf("  license <license-name|command> [<args>]\n\n")
-
-	fmt.Printf("Examples:\n")
-	fmt.Printf("  license mit\n")
-	fmt.Printf("  license mit > LICENSE.txt\n")
-	fmt.Printf("  license gpl-2.0 -o LICENSE.md\n\n")
-
-	fmt.Printf("Available commands:\n")
-	for _, c := range commands {
+		{"<license-name> [<args>]", "Generate the specified license"},
+		{"ls", "List locally available licenses"},
+		{"ls-remote", "List remote licenses"},
+		{"update [--verbose]", "Update local licenses to latest remote versions"},
+		{"version", "Print the current version"},
+	} {
 		fmt.Println(&c)
 	}
-	fmt.Printf("\nSee 'license help <command>' to learn about a particular command\n")
 
-	return true
-}
+	fmt.Println()
 
-func config(args []string) bool {
-	configSet := flag.NewFlagSet("config", flag.ExitOnError)
-	name := configSet.String("name", "", "Set full name on future licenses") // no default name
-
-	if len(args) < 1 {
-		console.Error("license: expected options for config")
-		configSet.PrintDefaults()
-		return false
+	// Examples
+	fmt.Println("Example:")
+	for _, c := range []exampleLine{
+		{"license mit", "Print MIT license"},
+		{"license mit --year 2050 --name Alice", "Print MIT license and override year and name"},
+		{"license isc -o LICENSE.txt", "Write ISC license to a file named LICENSE.txt"},
+	} {
+		fmt.Println(&c)
 	}
 
-	configSet.Parse(args)
+	fmt.Println()
 
-	c := base.Config{Name: *name}
-	data, err := json.MarshalIndent(c, "", "    ")
-
-	if err != nil {
-		console.Error("license: failed to serialize config")
-		return false
-	}
-
-	home, err := homedir.Dir()
-	if err != nil {
-		console.Error("license: unable to locate home directory")
-		return false
-	}
-
-	file := path.Join(home, base.LicenseConfigFile)
-	if err := ioutil.WriteFile(file, data, 0700); err != nil {
-		console.Error(fmt.Sprintf("license: failed to create config file: %s", file))
-		return false
-	}
-
-	return true
-}
-
-func render(key, fullname string, year int) bool {
-	var c base.Config
-	c.Prepare(fullname, "")
-
-	var o base.Option
-	o.Name = c.Name
-	o.Year = year
-
-	tmpl, err := local.Template(key)
-	if err != nil {
-		// TODO: error message
-		return false
-	}
-
-	base.RenderTemplate(tmpl, &o)
 	return true
 }
 
 func main() {
 	args := os.Args[1:]
-
 	var success bool
 
 	if len(args) < 1 {
@@ -334,24 +319,41 @@ func main() {
 		first := args[0]
 
 		switch first {
-		case "config":
-			success = config(args[1:])
+		// Help information
+		case "-h":
+			fallthrough
+		case "--help":
+			fallthrough
 		case "help":
 			success = help()
+
+		// Version information
+		case "-v":
+			fallthrough
+		case "--version":
+			fallthrough
 		case "version":
 			success = version()
+
+		// List local licenses
+		case "ls":
+			fallthrough
 		case "list":
-			success = list(args[1:])
+			success = listLocal()
+
+		// List remote licenses
+		case "ls-remote":
+			fallthrough
+		case "list-remote":
+			success = listRemote()
+
+		// Update to latest remote licenses
 		case "update":
 			success = update()
-		case "make":
-			fallthrough
-		case "use":
-			fallthrough
-		case "generate":
-			success = generate(args[1:])
+
+		// Generate license if arg is known license name
 		default:
-			// TODO: handle unknown command
+			success = generate(args)
 		}
 	}
 

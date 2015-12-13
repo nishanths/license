@@ -2,8 +2,7 @@ package base
 
 import (
 	"fmt"
-	"math"
-	"os"
+	"io"
 	"text/template"
 	"time"
 )
@@ -20,17 +19,16 @@ func NewOption(n string) (o Option) {
 }
 
 func singleFormatString(l *License) string {
-	return fmt.Sprintf("%-15s(%s)", l.Key, l.Name)
+	return fmt.Sprintf("   %-15s(%s)", l.Key, l.Name)
 }
 
-func RenderList(licenses *[]License, ms time.Duration) {
+func RenderList(licenses *[]License) {
 	for _, l := range *licenses {
-		time.Sleep(ms * time.Duration(math.Pow(float64(10), float64(6))))
 		fmt.Println(singleFormatString(&l))
 	}
 }
 
-func RenderTemplate(t *template.Template, o *Option) (err error) {
-	err = t.ExecuteTemplate(os.Stdout, t.Name(), o)
+func RenderTemplate(t *template.Template, o *Option, w io.Writer) (err error) {
+	err = t.ExecuteTemplate(w, t.Name(), o)
 	return
 }
