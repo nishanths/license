@@ -7,6 +7,8 @@ import (
 	"time"
 )
 
+const indent = "  "
+
 type Option struct {
 	Year int
 	Name string
@@ -19,7 +21,7 @@ func NewOption(n string) (o Option) {
 }
 
 func singleFormatString(l *License) string {
-	return fmt.Sprintf("   %-15s(%s)", l.Key, l.Name)
+	return fmt.Sprintf("%s%-15s(%s)", indent+indent, l.Key, l.Name)
 }
 
 func RenderList(licenses *[]License) {

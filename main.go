@@ -6,9 +6,9 @@ import (
 	"fmt"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/nishanths/license/base"
-	"github.com/nishanths/license/console"
 	"github.com/nishanths/license/local"
 	"github.com/nishanths/license/remote"
+	"github.com/nishanths/simpleflag"
 	shutil "github.com/termie/go-shutil"
 	"io"
 	"io/ioutil"
@@ -19,42 +19,39 @@ import (
 )
 
 const (
-	tempDirectoryPrefix = "license-"
-	applicationVersion  = "0.1.0"
+	applicationVersion = "0.1.0"
+	indent             = "  "
 )
 
+type usageLine struct {
+	Command     string
+	Description string
+}
+
+type exampleLine usageLine
+
+func (l *usageLine) String() string {
+	return fmt.Sprintf("%s%-12s%s", indent+indent, l.Command, l.Description)
+}
+
+func (l *exampleLine) String() string {
+	return fmt.Sprintf("%s%-40s", indent+indent, l.Command)
+}
+
+func failedToCreateDirectory(p string) {
+	fmt.Println("license: failed to create directory", p)
+}
+
+func failedToSerializeLicenses() {
+	fmt.Println("license: failed to serialize licenses")
+}
+
+func fileAnIssue() {
+	fmt.Println("license: please create an issue at", base.RepositoryIssuesURL)
+}
+
 func listFailed() {
-	console.Error(fmt.Sprintf("license: failed to fetch available licenses: run `$ license bootstrap` before trying again."))
-}
-
-func permissionsFailed(p string) {
-	console.Error(fmt.Sprintf("Could not access %s. Make sure you have the permissions", p))
-}
-
-func createPathFail(p string) {
-	console.Error(fmt.Sprintf("Failed to make %s. Make sure you have the permissions", p))
-}
-
-func createPathSuccess(p string) {
-	console.Info(fmt.Sprintf("Created %s", p))
-}
-
-func render(key, fullname string, year int, w io.Writer) bool {
-	var c base.Config
-	c.Prepare(fullname, "")
-
-	var o base.Option
-	o.Name = c.Name
-	o.Year = year
-
-	tmpl, err := local.Template(key)
-	if err != nil {
-		// TODO: error message
-		return false
-	}
-
-	base.RenderTemplate(tmpl, &o, w)
-	return true
+	fmt.Println("license: failed to make list")
 }
 
 func generate(args []string) bool {
@@ -94,7 +91,7 @@ func generate(args []string) bool {
 		f = os.Stdout
 	} else {
 		var err error
-		f, err = os.Create("./" + output)
+		f, err = os.Create(output)
 		if err != nil {
 			// TODO: error message
 			return false
@@ -118,17 +115,119 @@ func generate(args []string) bool {
 	return false
 }
 
-func update() bool {
-	// Bail immediately if we cannot find the user's home directory
-	home, err := homedir.Dir()
+func help() bool {
+	// Heading
+	fmt.Println()
+	fmt.Println(indent + "Command-line license generator")
+	fmt.Println()
+
+	// Usage
+	fmt.Println(indent + "Usage:")
+	fmt.Println()
+	for _, c := range []usageLine{
+		{"use", "Create LICENSE file with specified license"},
+		{"view", "Print specified license on stdout"},
+		{"ls", "List locally available license names"},
+		{"ls-remote", "List remote license names"},
+		{"update", "Update local licenses to latest remote versions"},
+		{"help", "Show help information"},
+		{"version", "Print current version"},
+	} {
+		fmt.Println(&c)
+	}
+	fmt.Println()
+
+	// Example
+	fmt.Println(indent + "Example:")
+	fmt.Println()
+	for _, c := range []exampleLine{
+		{"license use mit", "Create MIT license in file named `LICENSE`"},
+		{"license use mit --filename LICENSE.md", "Create MIT license in file named `LICENSE.md`"},
+		{"license use isc --year 2050 --name Alice", "Use custom year and name"},
+	} {
+		fmt.Println(&c)
+	}
+	fmt.Println()
+
+	// Note
+	fmt.Println(indent + "Run `license ls` to see list of available licenses")
+	fmt.Println()
+
+	return true
+}
+
+func listHelper(fn func() ([]base.License, error)) bool {
+	licenses, err := fn()
 	if err != nil {
-		console.Error("Unable to locate home directory")
+		listFailed()
 		return false
 	}
 
-	tempLicensePath, err := ioutil.TempDir(os.TempDir(), tempDirectoryPrefix)
+	fmt.Println()
+	fmt.Println("  Available licenses:\n")
+	base.RenderList(&licenses)
+	fmt.Println()
+	return true
+}
+
+func listLocal() bool {
+	return listHelper(local.List)
+}
+
+func listRemote() bool {
+	return listHelper(remote.List)
+}
+
+func render(key, fullname string, year int, w io.Writer) bool {
+	var c base.Config
+	c.Prepare(fullname, "")
+
+	var o base.Option
+	o.Name = c.Name
+	o.Year = year
+
+	tmpl, err := local.Template(key)
 	if err != nil {
-		createPathFail("temporary directory")
+		// TODO: error message
+		return false
+	}
+
+	base.RenderTemplate(tmpl, &o, w)
+	return true
+}
+
+func unknownCommand(args []string) bool {
+	fmt.Printf("license: unknown command `%s`. See `license help`.\n", args[0])
+	return true
+}
+
+func update(args []string) bool {
+	// Determine if verbose logging is on
+	verboseLog := false
+
+	updateFlagSet := simpleflag.NewFlagSet("update")
+	updateFlagSet.Add("verbose", []string{"--verbose", "-v"}, false, "")
+	res, err := updateFlagSet.Parse(args)
+	if err != nil {
+		fmt.Println("license: error parsing arguments")
+		return false
+	}
+
+	if _, exists := res.Values["verbose"]; exists {
+		verboseLog = true
+	}
+
+	// Bail immediately if we cannot find the user's home directory
+	home, err := homedir.Dir()
+	if err != nil {
+		fmt.Println("license: unable to locate home directory")
+		return false
+	}
+
+	// Create temporary directory
+	tempLicensePath, err := ioutil.TempDir(os.TempDir(), "")
+	if err != nil {
+		fmt.Println("license: failed to create temporary directory")
 		return false
 	}
 
@@ -138,40 +237,47 @@ func update() bool {
 	listFilePath := path.Join(dataPath, base.ListFile)
 
 	defer func() {
-		console.Info("Cleaning up...")
-		console.Info(fmt.Sprintf("Removing temp directory %s", tempLicensePath))
+		if verboseLog {
+			fmt.Println("cleaning up")
+			fmt.Println("removing temporary directory", tempLicensePath)
+		}
 		os.RemoveAll(tempLicensePath)
-		console.Info("Bootstrap complete")
+		if verboseLog {
+			fmt.Println("bootstrap complete!")
+		}
 	}()
 
 	// Create data directories
 	pathsToMake := []string{rawPath, templatesPath}
 	for _, p := range pathsToMake {
 		if err := os.MkdirAll(p, 0700); err != nil {
-			createPathFail(p)
+			failedToCreateDirectory(p)
 			return false
 		}
 	}
-	createPathSuccess(fmt.Sprintf("temp directory %s", tempLicensePath))
 
 	// Fetch list from remote
 	licenses, err := remote.List()
 	if err != nil {
-		console.Error("Failed to make licenses list from api.github.com")
+		fmt.Println("license: failed to get license list from api.github.com")
 		return false
 	}
-	console.Info("Fetched license list from api.github.com")
+
+	if verboseLog {
+		fmt.Println("fetched license list from api.github.com")
+	}
 
 	// Serialize the list into JSON
 	// Write the serialized JSON to the list file
 	serialized, err := json.MarshalIndent(licenses, "", "    ")
 	if err != nil {
-		console.Error(fmt.Sprintf("Failed to serialize licenses. Please create an issue: %s", base.RepositoryIssuesURL))
+		failedToSerializeLicenses()
+		fileAnIssue()
 		return false
 	}
 
 	if err := ioutil.WriteFile(listFilePath, serialized, 0700); err != nil {
-		createPathFail(listFilePath)
+		failedToCreateDirectory(listFilePath)
 		return false
 	}
 
@@ -183,7 +289,7 @@ func update() bool {
 	for _, l := range licenses {
 		fullLicense, err := remote.Info(&l)
 		if err != nil {
-			console.Error("Failed to make detailed license info")
+			fmt.Println("license: failed to make detailed license info")
 			return false
 		}
 
@@ -191,20 +297,21 @@ func update() bool {
 
 		serialized, err := json.MarshalIndent(fullLicense, "", "    ")
 		if err != nil {
-			console.Error(fmt.Sprintf("Failed to serialize licenses. Please file an issue: %s", base.RepositoryIssuesURL))
+			failedToSerializeLicenses()
+			fileAnIssue()
 			return false
 		}
 
 		rawFilePath := path.Join(rawPath, l.Key+".json")
 		if err := ioutil.WriteFile(rawFilePath, serialized, 0700); err != nil {
-			createPathFail(rawFilePath)
+			failedToCreateDirectory(rawFilePath)
 			return false
 		}
 
 		templateData := fullLicense.TextTemplate()
 		templateFilePath := path.Join(templatesPath, l.Key+".tmpl")
 		if err := ioutil.WriteFile(templateFilePath, []byte(templateData), 0700); err != nil {
-			createPathFail(templateFilePath)
+			failedToCreateDirectory(templateFilePath)
 			return false
 		}
 	}
@@ -212,100 +319,26 @@ func update() bool {
 	// Remove exisitng path
 	realLicensePath := path.Join(home, base.LicenseDirectory)
 	if err := os.RemoveAll(realLicensePath); err != nil && os.IsPermission(err) {
-		permissionsFailed(realLicensePath)
+		fmt.Println("license: failed to access directory", realLicensePath)
+		fmt.Println("license: make sure you have the right permissions")
 		return false
 	}
 
 	// Copy temp data to real path
 	if err := shutil.CopyTree(tempLicensePath, realLicensePath, nil); err != nil {
-		console.Error(fmt.Sprintf("Failed to copy data to %s", realLicensePath))
+		fmt.Println("license: failed to copy data to", realLicensePath)
 		return false
 	}
-	createPathSuccess(fmt.Sprintf("and copied data to %s", realLicensePath))
+
+	if verboseLog {
+		fmt.Println("copied data to", realLicensePath)
+	}
 
 	return true
 }
 
 func version() bool {
 	fmt.Println(applicationVersion)
-	return true
-}
-
-func listHelper(fn func() ([]base.License, error)) bool {
-	licenses, err := fn()
-	if err != nil {
-		listFailed()
-		return false
-	}
-
-	base.RenderList(&licenses)
-	fmt.Println()
-	return true
-}
-
-func listRemote() bool {
-	fmt.Println("Available licenses (remote):\n")
-	return listHelper(remote.List)
-}
-
-func listLocal() bool {
-	fmt.Println("Available licenses (local):\n")
-	return listHelper(local.List)
-}
-
-type usageLine struct {
-	Command     string
-	Description string
-}
-
-type exampleLine usageLine
-
-func (l *usageLine) String() string {
-	return fmt.Sprintf("   %-28s%s", l.Command, l.Description)
-}
-
-func (l *exampleLine) String() string {
-	return fmt.Sprintf("   %-40s%s", l.Command, l.Description)
-}
-
-func help() bool {
-	// Heading
-	fmt.Println("Command-line license generator")
-	fmt.Println()
-
-	// Note
-	fmt.Println("Note:")
-	fmt.Println("  <license-name> refers to any license name listed in `license ls`")
-
-	fmt.Println()
-
-	// Usage
-	fmt.Println("Usage:")
-	for _, c := range []usageLine{
-		{"help", "Show help information"},
-		{"<license-name> [<args>]", "Generate the specified license"},
-		{"ls", "List locally available licenses"},
-		{"ls-remote", "List remote licenses"},
-		{"update [--verbose]", "Update local licenses to latest remote versions"},
-		{"version", "Print the current version"},
-	} {
-		fmt.Println(&c)
-	}
-
-	fmt.Println()
-
-	// Examples
-	fmt.Println("Example:")
-	for _, c := range []exampleLine{
-		{"license mit", "Print MIT license"},
-		{"license mit --year 2050 --name Alice", "Print MIT license and override year and name"},
-		{"license isc -o LICENSE.txt", "Write ISC license to a file named LICENSE.txt"},
-	} {
-		fmt.Println(&c)
-	}
-
-	fmt.Println()
-
 	return true
 }
 
@@ -316,9 +349,9 @@ func main() {
 	if len(args) < 1 {
 		success = help()
 	} else {
-		first := args[0]
+		command := args[0]
 
-		switch first {
+		switch command {
 		// Help information
 		case "-h":
 			fallthrough
@@ -349,11 +382,19 @@ func main() {
 
 		// Update to latest remote licenses
 		case "update":
-			success = update()
+			fallthrough
+		case "bootstrap":
+			success = update(args[1:])
 
-		// Generate license if arg is known license name
+		// Generate license
+		case "view":
+			fallthrough
+		case "use":
+			success = generate(args[1:])
+
+		// Show help if unknown command
 		default:
-			success = generate(args)
+			success = unknownCommand(args)
 		}
 	}
 

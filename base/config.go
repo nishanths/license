@@ -6,8 +6,8 @@ import (
 )
 
 const (
-	FullnameEnvVariable = "LICENSE_FULLNAME"
-	defaultFullname     = ""
+	NameEnvVariable = "LICENSE_FULLNAME"
+	defaultName     = ""
 )
 
 type Config struct {
@@ -21,7 +21,7 @@ func (c *Config) Prepare(preferred, fallback string) {
 	}
 
 	// Use the env variable if it exists
-	if name, exists := os.LookupEnv(FullnameEnvVariable); exists {
+	if name, exists := os.LookupEnv(NameEnvVariable); exists {
 		c.Name = name
 		return
 	}
@@ -45,5 +45,5 @@ func (c *Config) Prepare(preferred, fallback string) {
 	}
 
 	// Finally use the default
-	c.Name = defaultFullname
+	c.Name = defaultName
 }
