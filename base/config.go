@@ -6,44 +6,18 @@ import (
 )
 
 const (
-	NameEnvVariable = "LICENSE_FULLNAME"
+	NameEnvVariable = "LICENSE_FULL_NAME"
 	defaultName     = ""
 )
 
-type Config struct {
-	Name string `json:"name"`
-}
-
-func (c *Config) Prepare(preferred, fallback string) {
-	if preferred != "" {
-		c.Name = preferred
-		return
+func GetName() string {
+	if name, exists := os.LookupEnv(NameEnvVariable); exists { // Use the env variable if it exists
+		return name
+	} else if name, err := gitconfig.Username(); err == nil { // Attempt to use local gitconfig for name
+		return name
+	} else if name, err := gitconfig.Global("user.name"); err == nil { // Attempt to use global gitconfig for name
+		return name
+	} else { // Finally use the default
+		return defaultName
 	}
-
-	// Use the env variable if it exists
-	if name, exists := os.LookupEnv(NameEnvVariable); exists {
-		c.Name = name
-		return
-	}
-
-	// Attempt to use local gitconfig for name
-	if name, err := gitconfig.Username(); err == nil {
-		c.Name = name
-		return
-	}
-
-	// Attempt to use global gitconfig for name
-	if name, err := gitconfig.Global("user.name"); err == nil {
-		c.Name = name
-		return
-	}
-
-	// Use the non-empty fallback
-	if fallback != "" {
-		c.Name = fallback
-		return
-	}
-
-	// Finally use the default
-	c.Name = defaultName
 }

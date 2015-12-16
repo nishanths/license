@@ -2,20 +2,22 @@ package main
 
 import (
 	"encoding/json"
-	"flag"
 	"fmt"
-	homedir "github.com/mitchellh/go-homedir"
-	"github.com/nishanths/license/base"
-	"github.com/nishanths/license/local"
-	"github.com/nishanths/license/remote"
-	"github.com/nishanths/simpleflag"
-	shutil "github.com/termie/go-shutil"
-	"io"
 	"io/ioutil"
 	"os"
 	"path"
+	"sort"
+	"strconv"
 	"strings"
 	"time"
+
+	"github.com/nishanths/license/base"
+	"github.com/nishanths/license/local"
+	"github.com/nishanths/license/remote"
+
+	homedir "github.com/mitchellh/go-homedir"
+	"github.com/nishanths/simpleflag"
+	shutil "github.com/termie/go-shutil"
 )
 
 const (
@@ -31,7 +33,7 @@ type usageLine struct {
 type exampleLine usageLine
 
 func (l *usageLine) String() string {
-	return fmt.Sprintf("%s%-12s%s", indent+indent, l.Command, l.Description)
+	return fmt.Sprintf("%s%-14s%s", indent+indent, l.Command, l.Description)
 }
 
 func (l *exampleLine) String() string {
@@ -40,6 +42,10 @@ func (l *exampleLine) String() string {
 
 func failedToCreateDirectory(p string) {
 	fmt.Println("license: failed to create directory", p)
+}
+
+func failedToCreateFile(p string) {
+	fmt.Println("license: failed to create file", p)
 }
 
 func failedToSerializeLicenses() {
@@ -54,65 +60,126 @@ func listFailed() {
 	fmt.Println("license: failed to make list")
 }
 
+func errorParsingArguments() {
+	fmt.Println("license: error parsing arguments. See \"license help\".")
+}
+
+func unknownArgument(a string) {
+	fmt.Printf("license: unknown argument: %v. See \"license help\".", a)
+}
+
+func badArgumentSyntax(a string) {
+	fmt.Printf("license: bad argument: %v. See \"license help\"", a)
+}
+
 func generate(args []string) bool {
 	if len(args) < 1 {
-		// TODO: print error message
+		fmt.Println("license: expected license name. See \"license help\".")
 		return false
 	}
 
-	name := ""
-	year := time.Now().Year()
-	output := ""
-	var f *os.File
+	w := os.Stdout
 
-	if len(args) > 2 {
-		var c base.Config
-		c.Prepare("", "")
+	// Argument values
+	var name, year, filename, licenseKey string
 
-		generateSet := flag.NewFlagSet("generate", flag.ExitOnError)
+	nameCh := make(chan string, 1)
+	go func(ch chan string) {
+		ch <- base.GetName()
+	}(nameCh)
 
-		generateSet.StringVar(&name, "n", c.Name, "Specify name to use on license")
-		generateSet.StringVar(&name, "name", c.Name, "Specify name to use on license")
+	// Parse arguments
+	generateFlagSet := simpleflag.NewFlagSet("generate")
+	generateFlagSet.Add("name", []string{"--name", "-n"}, false)
+	generateFlagSet.Add("year", []string{"--year", "-y"}, false)
+	generateFlagSet.Add("output", []string{"--output", "-o"}, false)
+	result, err := generateFlagSet.Parse(args)
 
-		generateSet.IntVar(&year, "y", time.Now().Year(), "Specify year to use of license")
-		generateSet.IntVar(&year, "year", time.Now().Year(), "Specify year to use of license")
-
-		generateSet.StringVar(&output, "o", "", "Specify output file name")
-		generateSet.StringVar(&output, "output", "", "Specify output file name")
-
-		err := generateSet.Parse(args[1:])
-		if err != nil {
-			// TODO: print error
-			return false
-		}
-	}
-
-	if output == "" {
-		f = os.Stdout
-	} else {
-		var err error
-		f, err = os.Create(output)
-		if err != nil {
-			// TODO: error message
-			return false
-		}
-	}
-
-	licenseName := strings.ToLower(args[0])
-	licenses, err := local.List()
-
+	// Exit early if there is an error
 	if err != nil {
+		errorParsingArguments()
+		return false
+	}
+	if len(result.BadFlags) > 0 {
+		badArgumentSyntax(result.BadFlags[0])
+		return false
+	}
+	if len(result.UnknownFlags) > 0 {
+		for _, flag := range result.UnknownFlags {
+			unknownArgument(flag)
+		}
+	}
+
+	// Normalize
+	// name
+	if _, exists := result.Values["name"]; exists {
+		name = result.Values["name"]
+	} else {
+		name = <-nameCh
+	}
+
+	// year
+	if _, exists := result.Values["year"]; exists {
+		year = result.Values["year"]
+	} else {
+		year = strconv.Itoa(time.Now().Year())
+	}
+
+	// filename
+	filename = result.Values["output"]
+	if filename != "" {
+		var err error
+		if w, err = os.Create(filename); err != nil {
+			failedToCreateFile(filename)
+			return false
+		}
+	}
+
+	// Local licenses available currently
+	licenses, err := local.List()
+	if err != nil {
+		// TODO: instead attempt bootstrap here or elsewhere
 		listFailed()
 		return false
 	}
 
-	for _, l := range licenses {
-		if l.Key == licenseName || l.Name == licenseName {
-			return render(l.Key, name, year, f)
+	// Get license key from remaining args
+search:
+	for _, arg := range result.Remaining {
+		for _, license := range licenses {
+			lowercasedArg := strings.ToLower(arg)
+			if license.Key == lowercasedArg || license.Name == lowercasedArg {
+				licenseKey = license.Key
+				break search
+			}
 		}
 	}
 
-	return false
+	if licenseKey == "" {
+		fmt.Println("license: could not find license. See \"license ls\" for list of available licenses.")
+		return false
+	}
+
+	tmpl, err := local.Template(licenseKey)
+	if err != nil {
+		fmt.Println("license: error loading template")
+		fileAnIssue()
+		return false
+	}
+
+	o := &base.Option{
+		Name: name,
+		Year: year,
+	}
+
+	// Execute
+	if err := base.RenderTemplate(tmpl, o, w); err != nil {
+		fmt.Println("license: error executing template")
+		fileAnIssue()
+		return false
+	}
+
+	return true
 }
 
 func help() bool {
@@ -124,9 +191,37 @@ func help() bool {
 	// Usage
 	fmt.Println(indent + "Usage:")
 	fmt.Println()
+	fmt.Println(indent + indent + "license [-y <year>] [-n <name>] [-o <filename>] [license-name]")
+	fmt.Println()
+
+	// Example
+	fmt.Println(indent + "Example:")
+	fmt.Println()
+	for _, c := range []exampleLine{
+		{"license mit", ""},
+		{"license -y 2013 -n Alice mit", ""},
+		{"license -o LICENSE.txt ISC", ""},
+	} {
+		fmt.Println(&c)
+	}
+	fmt.Println()
+
+	// Options
+	fmt.Println(indent + "Options:")
+	fmt.Println()
 	for _, c := range []usageLine{
-		{"use", "Create LICENSE file with specified license"},
-		{"view", "Print specified license on stdout"},
+		{"-y, --year", "Year to use on license"},
+		{"-n, --name", "Name to use on license"},
+		{"-o, --output", "Output file for license"},
+	} {
+		fmt.Println(&c)
+	}
+	fmt.Println()
+
+	// Other commands:
+	fmt.Println(indent + "Other commands:")
+	fmt.Println()
+	for _, c := range []usageLine{
 		{"ls", "List locally available license names"},
 		{"ls-remote", "List remote license names"},
 		{"update", "Update local licenses to latest remote versions"},
@@ -137,20 +232,9 @@ func help() bool {
 	}
 	fmt.Println()
 
-	// Example
-	fmt.Println(indent + "Example:")
-	fmt.Println()
-	for _, c := range []exampleLine{
-		{"license use mit", "Create MIT license in file named `LICENSE`"},
-		{"license use mit --filename LICENSE.md", "Create MIT license in file named `LICENSE.md`"},
-		{"license use isc --year 2050 --name Alice", "Use custom year and name"},
-	} {
-		fmt.Println(&c)
-	}
-	fmt.Println()
-
 	// Note
-	fmt.Println(indent + "Run `license ls` to see list of available licenses")
+	fmt.Println(indent + "Run \"license ls\" for list of available license names")
+
 	fmt.Println()
 
 	return true
@@ -158,10 +242,13 @@ func help() bool {
 
 func listHelper(fn func() ([]base.License, error)) bool {
 	licenses, err := fn()
+
 	if err != nil {
 		listFailed()
 		return false
 	}
+
+	sort.Sort(base.ByLicenseKey(licenses))
 
 	fmt.Println()
 	fmt.Println("  Available licenses:\n")
@@ -178,26 +265,8 @@ func listRemote() bool {
 	return listHelper(remote.List)
 }
 
-func render(key, fullname string, year int, w io.Writer) bool {
-	var c base.Config
-	c.Prepare(fullname, "")
-
-	var o base.Option
-	o.Name = c.Name
-	o.Year = year
-
-	tmpl, err := local.Template(key)
-	if err != nil {
-		// TODO: error message
-		return false
-	}
-
-	base.RenderTemplate(tmpl, &o, w)
-	return true
-}
-
 func unknownCommand(args []string) bool {
-	fmt.Printf("license: unknown command `%s`. See `license help`.\n", args[0])
+	fmt.Printf("license: unknown command \"%s\". See \"license help\".\n", args[0])
 	return true
 }
 
@@ -206,10 +275,11 @@ func update(args []string) bool {
 	verboseLog := false
 
 	updateFlagSet := simpleflag.NewFlagSet("update")
-	updateFlagSet.Add("verbose", []string{"--verbose", "-v"}, false, "")
+	updateFlagSet.Add("verbose", []string{"--verbose", "-v"}, true)
+
 	res, err := updateFlagSet.Parse(args)
 	if err != nil {
-		fmt.Println("license: error parsing arguments")
+		errorParsingArguments()
 		return false
 	}
 
@@ -238,7 +308,6 @@ func update(args []string) bool {
 
 	defer func() {
 		if verboseLog {
-			fmt.Println("cleaning up")
 			fmt.Println("removing temporary directory", tempLicensePath)
 		}
 		os.RemoveAll(tempLicensePath)
@@ -353,16 +422,12 @@ func main() {
 
 		switch command {
 		// Help information
-		case "-h":
-			fallthrough
 		case "--help":
 			fallthrough
 		case "help":
 			success = help()
 
 		// Version information
-		case "-v":
-			fallthrough
 		case "--version":
 			fallthrough
 		case "version":
@@ -386,15 +451,8 @@ func main() {
 		case "bootstrap":
 			success = update(args[1:])
 
-		// Generate license
-		case "view":
-			fallthrough
-		case "use":
-			success = generate(args[1:])
-
-		// Show help if unknown command
 		default:
-			success = unknownCommand(args)
+			success = generate(args)
 		}
 	}
 

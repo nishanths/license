@@ -8,10 +8,12 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"sort"
 )
 
 const (
+	GitHubClientIdEnvVariable     = "GITHUB_CLIENT_ID"
+	GitHubClientSecretEnvVariable = "GITHUB_CLIENT_SECRET"
+
 	GitHubAPIBaseURL      = "https://api.github.com"
 	GitHubAPILicensesPath = "/licenses"
 	GitHubAPIAccept       = "application/vnd.github.drax-preview+json application/vnd.github.v3+json"
@@ -27,7 +29,7 @@ func do(req *http.Request) ([]byte, error) {
 
 	req.Header.Add("Accept", GitHubAPIAccept)
 
-	v, err := query.Values(option{os.Getenv("GITHUB_CLIENT_ID"), os.Getenv("GITHUB_CLIENT_SECRET")})
+	v, err := query.Values(option{os.Getenv(GitHubClientIdEnvVariable), os.Getenv(GitHubClientSecretEnvVariable)})
 	if err != nil {
 		return nil, err
 	}
@@ -60,7 +62,6 @@ func List() ([]base.License, error) {
 		return nil, err
 	}
 
-	sort.Sort(base.ByLicenseKey(licenses))
 	return licenses, nil
 }
 

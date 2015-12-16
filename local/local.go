@@ -6,7 +6,6 @@ import (
 	"github.com/nishanths/license/base"
 	"io/ioutil"
 	"path"
-	"sort"
 	"text/template"
 )
 
@@ -49,7 +48,6 @@ func List() ([]base.License, error) {
 		return nil, err
 	}
 
-	sort.Sort(base.ByLicenseKey(licenses))
 	return licenses, nil
 }
 
