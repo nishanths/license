@@ -9,6 +9,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/nishanths/license/base"
@@ -50,8 +51,14 @@ func fileAnIssue() {
 	fmt.Println("license: please create an issue at", base.RepositoryIssuesURL)
 }
 
+func unknownCommand(args []string) bool {
+	fmt.Printf("license: unknown command \"%s\". See \"license help\".\n", args[0])
+	return true
+}
+
 func listFailed() {
-	fmt.Println("license: failed to make list")
+	fmt.Println("license: failed to make list of licenses")
+	fmt.Println("license: try again after running \"license update\"")
 }
 
 func errorParsingArguments() {
@@ -106,15 +113,15 @@ func generate(args []string) bool {
 
 	// Normalize
 	// name
-	if _, exists := result.Values["name"]; exists {
-		name = result.Values["name"]
+	if n, exists := result.Values["name"]; exists {
+		name = n
 	} else {
 		name = <-nameCh
 	}
 
 	// year
-	if _, exists := result.Values["year"]; exists {
-		year = result.Values["year"]
+	if y, exists := result.Values["year"]; exists {
+		year = y
 	} else {
 		year = strconv.Itoa(time.Now().Year())
 	}
@@ -259,21 +266,20 @@ func listRemote() bool {
 	return listHelper(remote.List)
 }
 
-func unknownCommand(args []string) bool {
-	fmt.Printf("license: unknown command \"%s\". See \"license help\".\n", args[0])
-	return true
-}
-
 func update(args []string) bool {
 	// Determine if verbose logging is on
 	verboseLog := false
+	silentLog := false
 
 	updateFlagSet := simpleflag.NewFlagSet("update")
 	updateFlagSet.Add("verbose", []string{"--verbose", "-v"}, true)
+	updateFlagSet.Add("silent", []string{"--silent", "-s"}, true)
 
 	res, err := updateFlagSet.Parse(args)
 	if err != nil {
-		errorParsingArguments()
+		if !silentLog {
+			errorParsingArguments()
+		}
 		return false
 	}
 
@@ -281,17 +287,26 @@ func update(args []string) bool {
 		verboseLog = true
 	}
 
+	if _, exists := res.Values["silent"]; exists {
+		silentLog = true
+		verboseLog = false
+	}
+
 	// Bail immediately if we cannot find the user's home directory
 	home, err := homedir.Dir()
 	if err != nil {
-		fmt.Println("license: unable to locate home directory")
+		if !silentLog {
+			fmt.Println("license: unable to locate home directory")
+		}
 		return false
 	}
 
 	// Create temporary directory
 	tempLicensePath, err := ioutil.TempDir(os.TempDir(), "")
 	if err != nil {
-		fmt.Println("license: failed to create temporary directory")
+		if !silentLog {
+			fmt.Println("license: failed to create temporary directory")
+		}
 		return false
 	}
 
@@ -314,7 +329,9 @@ func update(args []string) bool {
 	pathsToMake := []string{rawPath, templatesPath}
 	for _, p := range pathsToMake {
 		if err := os.MkdirAll(p, 0700); err != nil {
-			failedToCreateDirectory(p)
+			if !silentLog {
+				failedToCreateDirectory(p)
+			}
 			return false
 		}
 	}
@@ -322,25 +339,33 @@ func update(args []string) bool {
 	// Fetch list from remote
 	licenses, err := remote.List()
 	if err != nil {
-		fmt.Println("license: failed to get license list from api.github.com")
+		if !silentLog {
+			fmt.Println("license: failed to get license list from api.github.com")
+		}
 		return false
 	}
 
 	if verboseLog {
-		fmt.Println("fetched license list from api.github.com")
+		if !silentLog {
+			fmt.Println("fetched license list from api.github.com")
+		}
 	}
 
 	// Serialize the list into JSON
 	// Write the serialized JSON to the list file
 	serialized, err := json.MarshalIndent(licenses, "", "    ")
 	if err != nil {
-		failedToSerializeLicenses()
-		fileAnIssue()
+		if !silentLog {
+			failedToSerializeLicenses()
+			fileAnIssue()
+		}
 		return false
 	}
 
 	if err := ioutil.WriteFile(listFilePath, serialized, 0700); err != nil {
-		failedToCreateDirectory(listFilePath)
+		if !silentLog {
+			failedToCreateDirectory(listFilePath)
+		}
 		return false
 	}
 
@@ -352,7 +377,9 @@ func update(args []string) bool {
 	for _, l := range licenses {
 		fullLicense, err := remote.Info(&l)
 		if err != nil {
-			fmt.Println("license: failed to make detailed license info")
+			if !silentLog {
+				fmt.Println("license: failed to make detailed license info")
+			}
 			return false
 		}
 
@@ -360,21 +387,27 @@ func update(args []string) bool {
 
 		serialized, err := json.MarshalIndent(fullLicense, "", "    ")
 		if err != nil {
-			failedToSerializeLicenses()
-			fileAnIssue()
+			if !silentLog {
+				failedToSerializeLicenses()
+				fileAnIssue()
+			}
 			return false
 		}
 
 		rawFilePath := path.Join(rawPath, l.Key+".json")
 		if err := ioutil.WriteFile(rawFilePath, serialized, 0700); err != nil {
-			failedToCreateDirectory(rawFilePath)
+			if !silentLog {
+				failedToCreateDirectory(rawFilePath)
+			}
 			return false
 		}
 
 		templateData := fullLicense.TextTemplate()
 		templateFilePath := path.Join(templatesPath, l.Key+".tmpl")
 		if err := ioutil.WriteFile(templateFilePath, []byte(templateData), 0700); err != nil {
-			failedToCreateDirectory(templateFilePath)
+			if !silentLog {
+				failedToCreateDirectory(templateFilePath)
+			}
 			return false
 		}
 	}
@@ -382,14 +415,18 @@ func update(args []string) bool {
 	// Remove exisitng path
 	realLicensePath := path.Join(home, base.LicenseDirectory)
 	if err := os.RemoveAll(realLicensePath); err != nil && os.IsPermission(err) {
-		fmt.Println("license: failed to access directory", realLicensePath)
-		fmt.Println("license: make sure you have the right permissions")
+		if !silentLog {
+			fmt.Println("license: failed to access directory", realLicensePath)
+			fmt.Println("license: make sure you have the right permissions")
+		}
 		return false
 	}
 
 	// Copy temp data to real path
 	if err := shutil.CopyTree(tempLicensePath, realLicensePath, nil); err != nil {
-		fmt.Println("license: failed to copy data to", realLicensePath)
+		if !silentLog {
+			fmt.Println("license: failed to copy data to", realLicensePath)
+		}
 		return false
 	}
 
@@ -408,6 +445,21 @@ func version() bool {
 func main() {
 	args := os.Args[1:]
 	var success bool
+	wg := sync.WaitGroup{}
+
+	// check existence of license data directory
+	// and begin making it if not present
+	if home, err := homedir.Dir(); err == nil && len(args) >= 1 && !(args[0] == "update" || args[0] == "bootstrap") {
+		dataPath := path.Join(home, base.LicenseDirectory, base.DataDirectory)
+
+		if _, err := os.Stat(dataPath); os.IsNotExist(err) {
+			wg.Add(1)
+			go func() {
+				update([]string{"--silent"}) // silent
+				wg.Done()
+			}()
+		}
+	}
 
 	if len(args) < 1 {
 		success = help()
@@ -427,11 +479,11 @@ func main() {
 		case "version":
 			success = version()
 
-		// List local licenses
-		case "ls":
+		// Update to latest remote licenses
+		case "update":
 			fallthrough
-		case "list":
-			success = listLocal()
+		case "bootstrap":
+			success = update(args[1:])
 
 		// List remote licenses
 		case "ls-remote":
@@ -439,16 +491,20 @@ func main() {
 		case "list-remote":
 			success = listRemote()
 
-		// Update to latest remote licenses
-		case "update":
+		// List local licenses
+		case "ls":
 			fallthrough
-		case "bootstrap":
-			success = update(args[1:])
+		case "list":
+			wg.Wait()
+			success = listLocal()
 
 		default:
+			wg.Wait()
 			success = generate(args)
 		}
 	}
+
+	wg.Wait()
 
 	if !success {
 		os.Exit(1)
