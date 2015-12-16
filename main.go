@@ -22,22 +22,16 @@ import (
 
 const (
 	applicationVersion = "0.1.0"
-	indent             = "  "
+	helpIndent         = "  "
 )
 
-type usageLine struct {
+type helpLine struct {
 	Command     string
 	Description string
 }
 
-type exampleLine usageLine
-
-func (l *usageLine) String() string {
-	return fmt.Sprintf("%s%-14s%s", indent+indent, l.Command, l.Description)
-}
-
-func (l *exampleLine) String() string {
-	return fmt.Sprintf("%s%-40s", indent+indent, l.Command)
+func (l *helpLine) String() string {
+	return fmt.Sprintf("%s%-14s%s", helpIndent+helpIndent, l.Command, l.Description)
 }
 
 func failedToCreateDirectory(p string) {
@@ -185,31 +179,31 @@ search:
 func help() bool {
 	// Heading
 	fmt.Println()
-	fmt.Println(indent + "Command-line license generator")
+	fmt.Println(helpIndent + "Command-line license generator")
 	fmt.Println()
 
 	// Usage
-	fmt.Println(indent + "Usage:")
+	fmt.Println(helpIndent + "Usage:")
 	fmt.Println()
-	fmt.Println(indent + indent + "license [-y <year>] [-n <name>] [-o <filename>] [license-name]")
+	fmt.Println(helpIndent + helpIndent + "license [-y <year>] [-n <name>] [-o <filename>] [license-name]")
 	fmt.Println()
 
 	// Example
-	fmt.Println(indent + "Example:")
+	fmt.Println(helpIndent + "Example:")
 	fmt.Println()
-	for _, c := range []exampleLine{
+	for _, c := range []helpLine{
 		{"license mit", ""},
 		{"license -y 2013 -n Alice mit", ""},
-		{"license -o LICENSE.txt ISC", ""},
+		{"license -o LICENSE.txt isc", ""},
 	} {
 		fmt.Println(&c)
 	}
 	fmt.Println()
 
 	// Options
-	fmt.Println(indent + "Options:")
+	fmt.Println(helpIndent + "Options:")
 	fmt.Println()
-	for _, c := range []usageLine{
+	for _, c := range []helpLine{
 		{"-y, --year", "Year to use on license"},
 		{"-n, --name", "Name to use on license"},
 		{"-o, --output", "Output file for license"},
@@ -219,9 +213,9 @@ func help() bool {
 	fmt.Println()
 
 	// Other commands:
-	fmt.Println(indent + "Other commands:")
+	fmt.Println(helpIndent + "Other commands:")
 	fmt.Println()
-	for _, c := range []usageLine{
+	for _, c := range []helpLine{
 		{"ls", "List locally available license names"},
 		{"ls-remote", "List remote license names"},
 		{"update", "Update local licenses to latest remote versions"},
@@ -233,7 +227,7 @@ func help() bool {
 	fmt.Println()
 
 	// Note
-	fmt.Println(indent + "Run \"license ls\" for list of available license names")
+	fmt.Println(helpIndent + "Run \"license ls\" for list of available license names")
 
 	fmt.Println()
 
