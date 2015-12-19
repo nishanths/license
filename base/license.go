@@ -1,9 +1,9 @@
 package base
 
-import (
-	"fmt"
-)
+import "fmt"
 
+// License is a representation of a License object
+// as presented in the GitHub API.
 type License struct {
 	Key            string   `json:"key"`
 	Name           string   `json:"name"`
@@ -19,6 +19,8 @@ type License struct {
 	Body           string   `json:"body"`
 }
 
+// ByLicenseKey implements sort.Interface
+// and can sort Licenses by their Key in alphabetical order.
 type ByLicenseKey []License
 
 func (a ByLicenseKey) Len() int {

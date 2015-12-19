@@ -55,6 +55,8 @@ func fetch(req *http.Request) ([]byte, error) {
 	return body, nil
 }
 
+// fetchIndex performs the JSON from the GitHub API that lists
+// the available licenses.
 func fetchIndex() ([]byte, error) {
 	req, err := http.NewRequest("GET", gitHubAPIBaseURL+gitHubAPILicensesPath, nil)
 
@@ -65,6 +67,7 @@ func fetchIndex() ([]byte, error) {
 	return fetch(req)
 }
 
+// fetchInfo fetches the full JSON information for a license.
 func (l *License) fetchFullInfo() ([]byte, error) {
 	req, err := http.NewRequest("GET", l.Url, nil)
 

@@ -25,14 +25,19 @@ func read(f string) ([]byte, error) {
 	return contents, nil
 }
 
+// readIndex reads the local index JSON file that has the list
+// of current local licenses.
 func readIndex() ([]byte, error) {
 	return read(IndexFile)
 }
 
+// readFullInfo reads the local full JSON information for the given license.
 func (l *License) readFullInfo() ([]byte, error) {
 	return read(filepath.Join(RawDirectory, l.Key+".json"))
 }
 
+// readTemplate reads the template data and returns a template
+// for a given license key.
 func readTemplate(key string) (*template.Template, error) {
 	home, err := homedir.Dir()
 

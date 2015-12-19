@@ -19,6 +19,8 @@ func renderTemplate(t *template.Template, o *renderOption, w io.Writer) error {
 	return t.ExecuteTemplate(w, t.Name(), o)
 }
 
+// Generate parses arguments and outputs the selected license.
+// Generate returns a non-nil error if it is unable to do so successfully.
 func Generate(args []string) error {
 	if len(args) < 1 {
 		return NewErrExpectedLicenseName()
