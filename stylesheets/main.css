@@ -1,0 +1,383 @@
+/*
+   Copyright 2014 GitHub Inc.
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+
+*/
+@import url(https://fonts.googleapis.com/css?family=Karla:400,400italic,700);
+.pl-c {
+  color: #969896;
+}
+.pl-c1,
+.pl-s .pl-v {
+  color: #0086b3;
+}
+.pl-e,
+.pl-en {
+  color: #795da3;
+}
+.pl-s .pl-s1,
+.pl-smi {
+  color: #333;
+}
+.pl-ent {
+  color: #63a35c;
+}
+.pl-k {
+  color: #a71d5d;
+}
+.pl-pds,
+.pl-s,
+.pl-s .pl-pse .pl-s1,
+.pl-sr,
+.pl-sr .pl-cce,
+.pl-sr .pl-sra,
+.pl-sr .pl-sre {
+  color: #183691;
+}
+.pl-v {
+  color: #ed6a43;
+}
+.pl-id {
+  color: #b52a1d;
+}
+.pl-ii {
+  background-color: #b52a1d;
+  color: #f8f8f8;
+}
+.pl-sr .pl-cce {
+  color: #63a35c;
+  font-weight: bold;
+}
+.pl-ml {
+  color: #693a17;
+}
+.pl-mh,
+.pl-mh .pl-en,
+.pl-ms {
+  color: #1d3e81;
+  font-weight: bold;
+}
+.pl-mq {
+  color: #008080;
+}
+.pl-mi {
+  color: #333;
+  font-style: italic;
+}
+.pl-mb {
+  color: #333;
+  font-weight: bold;
+}
+.pl-md {
+  background-color: #ffecec;
+  color: #bd2c00;
+}
+.pl-mi1 {
+  background-color: #eaffea;
+  color: #55a532;
+}
+.pl-mdr {
+  color: #795da3;
+  font-weight: bold;
+}
+.pl-mo {
+  color: #1d3e81;
+}
+body {
+  /*colors and font*/
+  background-color: #fff;
+  font: 15px/1.5 "Karla", "Helvetica Neue", Helvetica, "Ubuntu", Arial, sans-serif;
+  color: #333;
+  font-weight: 400;
+  /*flex*/
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /*typography*/
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: auto;
+  letter-spacing: -0.25px;
+  margin: 0;
+  padding: 0;
+}
+hr {
+  border: 0;
+  width: 800px;
+  max-width: 40%;
+  background: #e5e5e5;
+  height: 1px;
+  margin: 0 0 20px;
+}
+/*sections*/
+section {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+section.footer {
+  padding-bottom: 60px;
+}
+section.one {
+  padding-top: 60px;
+  padding-bottom: 40px;
+}
+section.one .project-name {
+  display: flex;
+  justify-content: center;
+  font-size: 35px;
+  color: #444 !important;
+}
+section.one .project-name a {
+  color: #444 !important;
+}
+section.one .tagline {
+  display: flex;
+  justify-content: center;
+  font-weight: 400;
+  font-style: italic;
+  margin-bottom: 0;
+}
+section.two {
+  padding-top: 5px;
+  padding-bottom: 0px;
+}
+section.install {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+section.video {
+  padding-top: 40px;
+  padding-bottom: 80px;
+}
+section.usage {
+  padding-bottom: 60px;
+}
+section.usage h1 {
+  margin-bottom: 60px;
+}
+section.usage .content {
+  max-width: 80%;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-around;
+}
+section.usage .content .usage-piece {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0 40px;
+}
+/*Headers*/
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: #444;
+  margin: 0;
+  margin-bottom: 20px;
+}
+h1,
+h2,
+h3 {
+  letter-spacing: -0.75px;
+  line-height: 1.1;
+}
+h1 {
+  font-size: 28px;
+}
+h2 {
+  color: #393939;
+}
+h3,
+h4,
+h5,
+h6 {
+  color: #494949;
+}
+/*Elements*/
+p,
+ul,
+ol,
+table,
+pre,
+dl {
+  margin: 0 0 20px;
+}
+a {
+  color: #39c;
+  text-decoration: none;
+}
+a:hover {
+  color: #069;
+}
+a small {
+  font-size: 11px;
+  color: #777;
+  margin-top: -0.3em;
+  display: block;
+}
+a:hover small {
+  color: #777;
+}
+blockquote {
+  border-left: 1px solid #e5e5e5;
+  margin: 0;
+  padding: 0 0 0 20px;
+  font-style: italic;
+}
+code,
+pre {
+  font-family: "Bitstream Vera Sans Mono", "Menlo", "Lucida Console", "Terminal", "Consolas", "Inconsolata", "Liberation Mono", "DejaVu Sans Mono", "Courier New", monospace;
+  color: #111;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
+pre {
+  padding: 10px 35px;
+  background: #f8f8f8;
+  border-radius: 3px;
+  overflow-x: auto;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th,
+td {
+  text-align: left;
+  padding: 5px 10px;
+  border-bottom: 1px solid #e5e5e5;
+}
+dt {
+  color: #444;
+  font-weight: 700;
+}
+th {
+  color: #444;
+}
+img,
+video {
+  max-width: 100%;
+}
+header {
+  width: 270px;
+  float: left;
+  position: fixed;
+  -webkit-font-smoothing: subpixel-antialiased;
+}
+header ul {
+  list-style: none;
+  height: 40px;
+  padding: 0;
+  background: #f4f4f4;
+  border-radius: 5px;
+  border: 1px solid #e0e0e0;
+  width: 270px;
+}
+strong {
+  color: #222;
+  font-weight: 700;
+}
+small {
+  font-size: 11px;
+}
+section {
+  width: 100%;
+}
+header a small {
+  display: inline;
+}
+@media print, screen and (max-width: 1150px) {
+  section.usage {
+    padding-bottom: 20px;
+  }
+  section.usage .content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: start;
+  }
+  section.usage .content .usage-piece {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 35px;
+    padding: 0 30px;
+  }
+  section.usage .content .usage-piece code,
+  section.usage .content .usage-piece pre {
+    padding: 10px;
+  }
+  section.usage .content h3 {
+    margin-bottom: 15px;
+  }
+}
+@media print, screen and (max-width: 720px) {
+  body {
+    word-wrap: break-word;
+  }
+  pre,
+  code {
+    word-wrap: normal;
+  }
+  section.usage {
+    max-width: 100%;
+  }
+  section.usage .content {
+    max-width: 100%;
+  }
+  section.usage .content .usage-piece {
+    margin-bottom: 25px;
+    padding: 0 40px;
+  }
+}
+@media print, screen and (max-width: 480px) {
+  body {
+    padding: 15px;
+  }
+  section.one {
+    padding-top: 20px;
+  }
+  section.footer {
+    padding-bottom: 20px;
+  }
+  section.video {
+    padding-top: 20px;
+    padding-bottom: 40px;
+  }
+  section.usage h1 {
+    margin-bottom: 40px;
+  }
+  section.usage .content {
+    max-width: 100%;
+  }
+  section.usage .content .usage-piece {
+    margin-bottom: 25px;
+    padding: 0 10px;
+  }
+}
+@media print {
+  section.video,
+  video {
+    display: none;
+  }
+}
