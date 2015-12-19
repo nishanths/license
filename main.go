@@ -19,18 +19,19 @@ func pathExists(p string) bool {
 
 func main() {
 	args := os.Args[1:]
-	wg := sync.WaitGroup{}
+	var wg sync.WaitGroup
 	var mainErr error
 
 	// Check existence of license data directory
 	// and start making it if it is not present.
-	// If we cannot find the home directory, silently ignore
-	// for now and handle in the specific command function called.
+	// If we cannot find the home directory, we silently ignore the issue
+	// for nowl the specific command function will return an error when called.
 	if home, err := homedir.Dir(); err == nil && len(args) >= 1 && !(args[0] == "update" || args[0] == "bootstrap") && !pathExists(path.Join(home, base.LicenseDirectory, base.DataDirectory)) {
 		wg.Add(1)
+
 		go func() {
+			defer wg.Done()
 			base.Bootstrap([]string{"--quiet"})
-			wg.Done()
 		}()
 	}
 
@@ -79,12 +80,8 @@ func main() {
 
 	wg.Wait()
 
-	exit(mainErr)
-}
-
-func exit(err error) {
-	if err != nil {
-		fmt.Println(err)
+	if mainErr != nil {
+		fmt.Fprintln(os.Stderr, mainErr)
 		os.Exit(1)
 	}
 

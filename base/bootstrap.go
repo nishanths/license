@@ -9,6 +9,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"sync"
 )
 
 func setLogLevel(args []string) error {
@@ -31,6 +32,36 @@ func setLogLevel(args []string) error {
 
 	if _, exists := result.Values["verbose"]; exists {
 		logger.SetVerbose(true)
+	}
+
+	return nil
+}
+
+func writeLicense(l *License, rawPath, templatesPath string) error {
+	// fetch full license info JSON
+	content, err := l.fetchFullInfo()
+	if err != nil {
+		return NewErrFetchFailed()
+	}
+
+	// write JSON to disk
+	rawFilePath := filepath.Join(rawPath, l.Key+".json")
+	if err := ioutil.WriteFile(rawFilePath, content, perm); err != nil {
+		return NewErrWriteFileFailed(rawFilePath)
+	}
+
+	// deserialize JSON to License struct
+	fullLicense, err := jsonToLicense(content)
+	if err != nil {
+		return NewErrDeserializeFailed(content)
+	}
+
+	// construct template and save template in templates directory
+	templateData := textTemplateString(&fullLicense)
+
+	templateFilePath := filepath.Join(templatesPath, l.Key+".tmpl")
+	if err := ioutil.WriteFile(templateFilePath, []byte(templateData), perm); err != nil {
+		return NewErrWriteFileFailed(templateFilePath)
 	}
 
 	return nil
@@ -99,32 +130,26 @@ func Bootstrap(args []string) error {
 		return NewErrDeserializeFailed(serialized)
 	}
 
-	// TODO: concurrent fetch
+	var wg sync.WaitGroup
+	wg.Add(len(licenses))
+	ch := make(chan error, len(licenses))
+
 	for _, l := range licenses {
-		// fetch full license info JSON
-		content, err := l.fetchFullInfo()
+		me := l // self copy needed because we do not want to use the same `l` address that for ranges over
+
+		go func(l *License) {
+			defer wg.Done()
+			ch <- writeLicense(l, rawPath, templatesPath)
+		}(&me)
+	}
+
+	wg.Wait()
+	close(ch)
+
+	// check for errors
+	for err := range ch {
 		if err != nil {
-			return NewErrFetchFailed()
-		}
-
-		// write JSON to disk
-		rawFilePath := filepath.Join(rawPath, l.Key+".json")
-		if err := ioutil.WriteFile(rawFilePath, serialized, perm); err != nil {
-			return NewErrWriteFileFailed(rawFilePath)
-		}
-
-		// deserialize JSON to License struct
-		fullLicense, err := jsonToLicense(content)
-		if err != nil {
-			return NewErrDeserializeFailed(content)
-		}
-
-		// construct template and save template in templates directory
-		templateData := textTemplateString(&fullLicense)
-		templateFilePath := filepath.Join(templatesPath, l.Key+".tmpl")
-
-		if err := ioutil.WriteFile(templateFilePath, []byte(templateData), perm); err != nil {
-			return NewErrWriteFileFailed(templateFilePath)
+			return err
 		}
 	}
 
