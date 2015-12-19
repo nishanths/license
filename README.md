@@ -6,13 +6,13 @@ Create licenses for your open-source projects from the command-line. *Hello, pro
 
 # What is license?
 
-`license` is a license generator that works from the command-line. 
+`license` is a command-line utility to make licenses from the comfort of your terminal. 
 
 #### Features
 
 * Supports all the licenses available on GitHub
 * Does not need network access (except on first run)
-* Always up-to-date with the licenses in GitHub's API
+* Updates itself to the latest licenses in GitHub's API when possible
 * Easy to customize the name, year, and output filename when needed
 
 
@@ -25,7 +25,7 @@ Create licenses for your open-source projects from the command-line. *Hello, pro
 #### Using go
 
 ````
-$ go get github.com/nishanths/license
+go get github.com/nishanths/license
 ````
 
 [More info](https://github.com/nishanths/license/wiki/Install-using-go)
@@ -36,20 +36,20 @@ Alternatively, download the [binary](https://github.com/nishanths/license/wiki/I
 
 # Usage
 
-#### Generating a license
+#### Generate a license
 
 To generate a license, simply run `license` followed by the license name. The following command generates the MIT license:
 
 ````bash
-$ license mit
+license mit
 ````
 
-#### Creating a license file
+#### Create a license file
 
 Use the `-o` option to save the license to a file. For example, the following command creates the file `LICENSE.txt` with the contents of the ISC license:
 
 ````
-$ license -o LICENSE.txt isc
+license -o LICENSE.txt isc
 ```` 
 
 More options and commands are described below.
@@ -64,10 +64,10 @@ By default, license uses the current year for the year on the generated license.
 * If command-line args are absent, it looks at the environment variable `LICENSE_FULL_NAME`
 * Finally, it uses the name from git config and mercurial config
 
-You can explicitly specify the name and year to use:
+The default ouput is suitable in most cases, but you can also explicitly specify the name and year:
 
 ````
-$ license --name Alice --year 2013 mit
+license --name Alice --year 2013 mit
 ````
 
 
@@ -76,16 +76,34 @@ $ license --name Alice --year 2013 mit
 View the list of locally avaialable licenses by running:
 
 ````
-$ license ls
+license ls
 ````
 
 The equivalent command to list remote licenses is:
 
 ````
-$ license ls-remote
+license ls-remote
 ````
 
-[Currently available list of licenses](https://github.com/nishanths/license/wiki/List-of-current-licenses)
+Current list of licenses:
+
+````
+    agpl-3.0      (GNU Affero General Public License v3.0)
+    apache-2.0    (Apache License 2.0)
+    artistic-2.0  (Artistic License 2.0)
+    bsd-2-clause  (BSD 2-clause "Simplified" License)
+    bsd-3-clause  (BSD 3-clause "New" or "Revised" License)
+    cc0-1.0       (Creative Commons Zero v1.0 Universal)
+    epl-1.0       (Eclipse Public License 1.0)
+    gpl-2.0       (GNU General Public License v2.0)
+    gpl-3.0       (GNU General Public License v3.0)
+    isc           (ISC License)
+    lgpl-2.1      (GNU Lesser General Public License v2.1)
+    lgpl-3.0      (GNU Lesser General Public License v3.0)
+    mit           (MIT License)
+    mpl-2.0       (Mozilla Public License 2.0)
+    unlicense     (The Unlicense)
+````
 
 #### Help
 
