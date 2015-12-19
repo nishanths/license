@@ -20,15 +20,11 @@ Additional commands:
 
 Run "license ls" to see list of available license names.
 ````
+
+# Demo
+
 <img src="https://zippy.gfycat.com/JoyfulBlandGermanshorthairedpointer.gif" autoplay muted loop></video>
 
-# Contents
-
-* Install
-* Get Started
-* Options
-* Contributing
-* License
 
 # Install
 
@@ -38,7 +34,7 @@ To install license, run:
 $ go get github.com/nishanths/license
 ````
 
-# Get Started
+# Usage
 
 #### Generating a license
 
