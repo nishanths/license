@@ -38,6 +38,10 @@ func Generate(args []string) error {
 		ch <- getName()
 	}(nameCh)
 
+	defer func() {
+		close(nameCh)
+	}()
+
 	// parse arguments
 	generateFlagSet := simpleflag.NewFlagSet("generate")
 	generateFlagSet.Add("name", []string{"--name", "-name", "-n"}, false)
