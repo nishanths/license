@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/github-light.css">
     <meta name="viewport" content="width=device-width">
+    <link rel="shortcut icon" href="https://nishanths.github.io/img/leaf.ico">
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
@@ -16,21 +17,66 @@
     <a href="https://github.com/nishanths/license"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/52760788cde945287fbb584134c4cbc2bc36f904/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f77686974655f6666666666662e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png"></a>
     <div class="wrapper">
       <header>
-        <h1>license</h1>
+        <h1>
+        <a id="license-" class="anchor" href="#license-" aria-hidden="true"><span class="octicon octicon-link"></span></a><a href="https://github.com/nishanths/license">license:</a> command-line license generator
+        </h1>
+        <!-- <p><a href="https://app.wercker.com/project/bykey/1407b8c71c720358bf15eeb5815f99bd"><img src="https://app.wercker.com/status/1407b8c71c720358bf15eeb5815f99bd/s" alt="wercker status" title="wercker status"></a></p> -->
+
         <p>Create licenses from the command-line. <em>Hello, productivity!</em></p>
-
-
         
+
+
+        <!-- <p class="view"><a href="https://github.com/nishanths/license">View the Project on GitHub <small>nishanths/license</small></a></p> -->
+
+        <h1></h1>
+
         <!-- <ul> -->
         <li>Works without network access (except for first-run)</li>
         <li>Automatically stays up-to-date with licenses in GitHub's API</li>
         <li>Makes it easy to customize the name, year, and output filename when needed</li>
         <!-- </ul> -->
+        <p></p>
+        
+<hr>
 
-        <p class="view"><a href="https://github.com/nishanths/license">View the Project on GitHub <small>nishanths/license</small></a></p>
-        <p><iframe src="https://ghbtns.com/github-btn.html?user=nishanths&repo=license&type=star&count=true&size=large" frameborder="0" scrolling="0" width="160px" height="30px"></iframe></p>
+        <h1>
+        <a id="install" class="anchor" href="#install" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install</h1>
 
-        <!-- <iframe src="https://ghbtns.com/github-btn.html?user=nishnanths&repo=license&type=fork&count=true&size=large" frameborder="0" scrolling="0" width="158px" height="30px"></iframe> -->
+        <!-- <h3> -->
+        <!-- <a id="using-go" class="anchor" href="#using-go" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using go</h3> -->
+        
+<pre><code>$ go get github.com/nishanths/license</code></pre>
+        <p><a href="https://github.com/nishanths/license#install">More install options</a>.</p>
+<hr>
+        <p>
+        <iframe src="https://ghbtns.com/github-btn.html?user=nishanths&repo=license&type=star&count=true&size=large" frameborder="0" scrolling="0" width="130px" height="30px"></iframe><iframe src="https://ghbtns.com/github-btn.html?user=nishanths&repo=license&type=fork&count=true&size=large" frameborder="0" scrolling="0" width="158px" height="30px"></iframe>
+</p> 
+<hr>
+<h1>Demo</h1>
+<p><video src="https://zippy.gfycat.com/JoyfulBlandGermanshorthairedpointer.webm" alt="demo-gif" style="max-width:100%" muted autoplay loop></p>
+<hr>
+<h1>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h1>
+
+<h3>
+<a id="generating-a-license" class="anchor" href="#generating-a-license" aria-hidden="true"><span class="octicon octicon-link"></span></a>Generating a license</h3>
+
+<p>To generate a license, simply run <code>license</code> followed by the license name. The following command generates the MIT license:</p>
+
+<div class="highlight highlight-source-shell"><pre>$ license mit</pre></div>
+
+<h3>
+<a id="creating-a-license-file" class="anchor" href="#creating-a-license-file" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating a license file</h3>
+
+<p>Use the <code>-o</code> option to save the license to a file. The following command creates the file <code>LICENSE.txt</code> with the contents of the ISC license:</p>
+
+<pre><code>$ license -o LICENSE.txt isc
+</code></pre>
+
+<p>More options and commands are described in the <a href="https://github.com/nishanths/license#usage">README</a>.</p>
+
+
+
 
         <!-- <ul>
           <li><a href="https://github.com/nishanths/license/zipball/master">Download <strong>ZIP File</strong></a></li>
@@ -39,52 +85,30 @@
         </ul> -->
       </header>
       <section>
-        <h1>
-<a id="license-" class="anchor" href="#license-" aria-hidden="true"><span class="octicon octicon-link"></span></a><a href="https://github.com/nishanths/license">license</a> <a href="https://app.wercker.com/project/bykey/1407b8c71c720358bf15eeb5815f99bd"><img src="https://app.wercker.com/status/1407b8c71c720358bf15eeb5815f99bd/s" alt="wercker status" title="wercker status"></a>
-</h1>
+        
 
 <p></p>
 <!-- 
 <h1>
 <a id="demo" class="anchor" href="#demo" aria-hidden="true"><span class="octicon octicon-link"></span></a>Demo</h1> -->
 
-<p><video src="https://zippy.gfycat.com/JoyfulBlandGermanshorthairedpointer.webm" alt="demo-gif" muted autoplay loop></p>
 
-<h1>
-<a id="install" class="anchor" href="#install" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install</h1>
 
-<p>Install license using go, or get a binary file.</p>
 
-<h4>
-<a id="using-go" class="anchor" href="#using-go" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using go</h4>
 
-<pre><code>$ go get github.com/nishanths/license
-</code></pre>
 
-<p>Make sure it works:</p>
-
-<pre><code>$ license --version 
-</code></pre>
-
-<p>Check out <a href="https://github.com/nishanths/license/wiki/Install-using-go">additional instructions</a> or <a href="https://github.com/nishanths/license/issues/new">create an issue</a> if you run into trouble.</p>
-
-<h4>
-<a id="binary" class="anchor" href="#binary" aria-hidden="true"><span class="octicon octicon-link"></span></a>Binary</h4>
-
-<p>Alternatively, grab the binary for your platform <a href="https://github.com/nishanths/license/wiki/Install-binaries">from the wiki page</a>.</p>
-
-<h1>
+<!-- <h1>
 <a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h1>
 
-<h4>
-<a id="generating-a-license" class="anchor" href="#generating-a-license" aria-hidden="true"><span class="octicon octicon-link"></span></a>Generating a license</h4>
+<h3>
+<a id="generating-a-license" class="anchor" href="#generating-a-license" aria-hidden="true"><span class="octicon octicon-link"></span></a>Generating a license</h3>
 
 <p>To generate a license, simply run <code>license</code> followed by the license name. The following command generates the MIT license:</p>
 
 <div class="highlight highlight-source-shell"><pre>$ license mit</pre></div>
 
-<h4>
-<a id="creating-a-license-file" class="anchor" href="#creating-a-license-file" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating a license file</h4>
+<h3>
+<a id="creating-a-license-file" class="anchor" href="#creating-a-license-file" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating a license file</h3>
 
 <p>Use the <code>-o</code> option to save the license to a file. The following command creates the file <code>LICENSE.txt</code> with the contents of the ISC license:</p>
 
@@ -96,8 +120,8 @@
 <h1>
 <a id="options" class="anchor" href="#options" aria-hidden="true"><span class="octicon octicon-link"></span></a>Options</h1>
 
-<h4>
-<a id="customize-name-and-year-on-the-license" class="anchor" href="#customize-name-and-year-on-the-license" aria-hidden="true"><span class="octicon octicon-link"></span></a>Customize name and year on the license</h4>
+<h3>
+<a id="customize-name-and-year-on-the-license" class="anchor" href="#customize-name-and-year-on-the-license" aria-hidden="true"><span class="octicon octicon-link"></span></a>Customize name and year on the license</h3>
 
 <p>By default, license uses the current year for the year on the generated license. To determine the name, license uses the following algorithm:</p>
 
@@ -113,8 +137,8 @@
 <pre><code>$ license --name Alice --year 2013 mit
 </code></pre>
 
-<h4>
-<a id="list-available-licenses" class="anchor" href="#list-available-licenses" aria-hidden="true"><span class="octicon octicon-link"></span></a>List available licenses</h4>
+<h3>
+<a id="list-available-licenses" class="anchor" href="#list-available-licenses" aria-hidden="true"><span class="octicon octicon-link"></span></a>List available licenses</h3>
 
 <p>View the list of locally avaialable licenses by running:</p>
 
@@ -128,8 +152,8 @@
 
 <p><a href="https://github.com/nishanths/license/wiki/List-of-current-licenses">Currently available list of licenses</a></p>
 
-<h4>
-<a id="help" class="anchor" href="#help" aria-hidden="true"><span class="octicon octicon-link"></span></a>Help</h4>
+<h3>
+<a id="help" class="anchor" href="#help" aria-hidden="true"><span class="octicon octicon-link"></span></a>Help</h3>
 
 <p>Help text is available by running <code>license --help</code>. <a href="https://github.com/nishanths/license/wiki/Help-output">View help command output</a></p>
 
@@ -144,11 +168,11 @@
 <p>Licensed under the <a href="https://github.com/nishanths/license/blob/master/LICENSE">MIT License</a>.</p>
 
 <p>The license file in this repo was generated by this program :).</p>
-      </section>
-      <footer>
-        <!-- <p>This project is maintained by <a href="https://github.com/nishanths">nishanths</a></p> -->
+      </section> -->
+      <!-- <footer>
+        <p>This project is maintained by <a href="https://github.com/nishanths">nishanths</a></p>
         <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
-      </footer>
+      </footer> -->
     </div>
     <script src="javascripts/scale.fix.js"></script>
     

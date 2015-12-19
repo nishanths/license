@@ -57,14 +57,18 @@
 body {
   background-color: #fff;
   padding:50px;
-  font: 14px/1.5 "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  color:#727272;
+  font: 15px/1.5 "Proxima Nova", "Helvetica Neue", Helvetica, "Ubuntu", Arial, sans-serif;
+  color:#333;
   font-weight:400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-rendering: optimizeLegibility;
 }
 
 h1, h2, h3, h4, h5, h6 {
   color:#222;
-  margin:0 0 20px;
+  margin: 20px 0 20px;
 }
 
 p, ul, ol, table, pre, dl {
@@ -120,9 +124,9 @@ blockquote {
 }
 
 code, pre {
-  font-family:Monaco, Bitstream Vera Sans Mono, Lucida Console, Terminal, Consolas, Liberation Mono, DejaVu Sans Mono, Courier New, monospace;
+  font-family:Menlo, "Ubuntu Mono", Bitstream Vera Sans Mono, Lucida Console, Terminal, Consolas, Liberation Mono, DejaVu Sans Mono, Courier New, monospace;
   color:#333;
-  font-size:12px;
+  font-size:14px;
 }
 
 pre {
@@ -249,11 +253,11 @@ footer {
   -webkit-font-smoothing:subpixel-antialiased;
 }
 
-header p {
+header p.view {
   margin-top: 30px;
 }
 
-@media print, screen and (max-width: 960px) {
+@media print, screen and (max-width: 20000px) {
 
   div.wrapper {
     width:auto;
@@ -267,11 +271,11 @@ header p {
   }
 
   header {
-    padding-right:320px;
+    /* padding-right:320px; */
   }
 
   section {
-    border:1px solid #e5e5e5;
+    /*border:1px solid #e5e5e5;*/
     border-width:1px 0;
     padding:20px 0;
     margin:0 0 20px;
