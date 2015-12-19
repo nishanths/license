@@ -28,7 +28,7 @@ func printExamples() {
 	fmt.Println("Examples:")
 	for _, c := range []helpLine{
 		{"license mit", ""},
-		{"license -o LICENSE.txt mit", ""},
+		{"license -o LICENSE.txt mpl-2.0", ""},
 		{"license -y 2013 -n Alice isc", ""},
 	} {
 		fmt.Println(&c)
@@ -64,6 +64,10 @@ func Help() error {
 
 	// Example
 	printExamples()
+	fmt.Println()
+
+	// Options:
+	printOptions()
 	fmt.Println()
 
 	// Additional commands
