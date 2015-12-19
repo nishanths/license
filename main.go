@@ -7,9 +7,10 @@ import (
 	"os"
 	"path"
 	"sync"
+	"time"
 )
 
-// pathExists returns true if the path exists
+// pathExists returns true if the path exists.
 func pathExists(p string) bool {
 	if _, err := os.Stat(p); os.IsNotExist(err) {
 		return false
@@ -17,22 +18,32 @@ func pathExists(p string) bool {
 	return true
 }
 
+// main returns exit code 0 on success
+// and exit code 1 on error.
 func main() {
 	args := os.Args[1:]
 	var wg sync.WaitGroup
 	var mainErr error
 
-	// Check existence of license data directory
+	// * Check existence of license data directory
 	// and start making it if it is not present.
-	// If we cannot find the home directory, we silently ignore the issue
-	// for nowl the specific command function will return an error when called.
-	if home, err := homedir.Dir(); err == nil && len(args) >= 1 && !(args[0] == "update" || args[0] == "bootstrap") && !pathExists(path.Join(home, base.LicenseDirectory, base.DataDirectory)) {
-		wg.Add(1)
+	// * Also, another time we update is around once every 20 runs
+	// so that the licenses list is up to date.
+	// * If we cannot find the home directory, we silently ignore the issue
+	// for now; the specific command function will return an error when called.
+	if home, err := homedir.Dir(); err == nil {
+		updateRequired := (time.Now().Unix() % 20) == 0
+		bootstrapRequired := !pathExists(path.Join(home, base.LicenseDirectory, base.DataDirectory))
+		repetitiveCommand := len(args) >= 1 && !(args[0] == "update" || args[0] == "bootstrap")
 
-		go func() {
-			defer wg.Done()
-			base.Bootstrap([]string{"--quiet"})
-		}()
+		if (updateRequired || bootstrapRequired) && !(repetitiveCommand) {
+			wg.Add(1)
+
+			go func() {
+				defer wg.Done()
+				base.Bootstrap([]string{"--quiet"})
+			}()
+		}
 	}
 
 	if len(args) < 1 {
