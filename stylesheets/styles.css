@@ -175,10 +175,11 @@ header ul {
 }
 
 header li {
-  width:89px;
-  float:left;
-  border-right:1px solid #e0e0e0;
-  height:40px;
+  /*list-style-position: inside;*/
+  /*width:89px;*/
+  /*float:left;*/
+  /*border-right:1px solid #e0e0e0;*/
+  /*height:40px;*/
 }
 
 header li:first-child a {
@@ -248,6 +249,10 @@ footer {
   -webkit-font-smoothing:subpixel-antialiased;
 }
 
+header p {
+  margin-top: 30px;
+}
+
 @media print, screen and (max-width: 960px) {
 
   div.wrapper {
@@ -311,7 +316,7 @@ footer {
   }
 
   header li, header ul li + li + li {
-    width:33%;
+    /*width:33%;*/
   }
 }
 
