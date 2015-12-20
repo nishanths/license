@@ -20,6 +20,8 @@ func pathExists(p string) bool {
 
 // main returns exit code 0 on success
 // and exit code 1 on error.
+// Errors, if any, are sent to stderr.
+// Other program output is sent to stdout.
 func main() {
 	args := os.Args[1:]
 	var wg sync.WaitGroup
@@ -52,34 +54,19 @@ func main() {
 		command := args[0]
 
 		switch command {
-		// Help information
-		case "--help":
-			fallthrough
-		case "help":
+		case "--help", "help":
 			mainErr = base.Help()
 
-		// Version information
-		case "--version":
-			fallthrough
-		case "version":
+		case "--version", "version":
 			mainErr = base.Version()
 
-		// Update to latest remote licenses
-		case "update":
-			fallthrough
-		case "bootstrap":
+		case "update", "bootstrap":
 			mainErr = base.Bootstrap(args[1:])
 
-		// List remote licenses
-		case "ls-remote":
-			fallthrough
-		case "list-remote":
+		case "ls-remote", "list-remote":
 			mainErr = base.ListRemote()
 
-		// List local licenses
-		case "ls":
-			fallthrough
-		case "list":
+		case "ls", "list":
 			wg.Wait()
 			mainErr = base.ListLocal()
 
