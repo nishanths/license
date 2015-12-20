@@ -135,7 +135,7 @@ section.footer {
 }
 section.one {
   padding-top: 60px;
-  padding-bottom: 40px;
+  padding-bottom: 20px;
 }
 section.one .project-name {
   display: flex;
@@ -152,6 +152,7 @@ section.one .tagline {
   font-weight: 400;
   font-style: italic;
   margin-bottom: 0;
+  text-align: center;
 }
 section.two {
   padding-top: 5px;
