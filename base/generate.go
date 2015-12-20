@@ -91,7 +91,7 @@ search:
 	for _, arg := range result.Remaining {
 		for _, license := range licenses {
 			lowercasedArg := strings.ToLower(arg)
-			if license.Key == lowercasedArg || license.Name == lowercasedArg {
+			if strings.ToLower(license.Key) == lowercasedArg || strings.ToLower(license.Name) == lowercasedArg {
 				licenseKey = license.Key
 				break search
 			}

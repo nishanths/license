@@ -187,7 +187,7 @@ func NewErrExpectedLicenseName() error {
 
 func NewErrCannotFindLicense() error {
 	return &errCannotFindLicense{
-		"cannot find given command or license",
+		"unable to find given command or license",
 		"run \"license ls\" for a list of available licenses or see \"license help\"",
 	}
 }

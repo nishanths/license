@@ -36,7 +36,7 @@ func main() {
 	if home, err := homedir.Dir(); err == nil {
 		updateRequired := (time.Now().Unix() % 20) == 0
 		bootstrapRequired := !pathExists(path.Join(home, base.LicenseDirectory, base.DataDirectory))
-		repetitiveCommand := len(args) >= 1 && !(args[0] == "update" || args[0] == "bootstrap")
+		repetitiveCommand := len(args) > 0 && (args[0] == "update" || args[0] == "bootstrap")
 
 		if (updateRequired || bootstrapRequired) && !(repetitiveCommand) {
 			wg.Add(1)

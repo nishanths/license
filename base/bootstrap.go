@@ -44,16 +44,16 @@ func writeLicense(l *License, rawPath, templatesPath string) error {
 		return NewErrFetchFailed()
 	}
 
-	// write JSON to disk
-	rawFilePath := filepath.Join(rawPath, l.Key+".json")
-	if err := ioutil.WriteFile(rawFilePath, content, perm); err != nil {
-		return NewErrWriteFileFailed(rawFilePath)
-	}
-
 	// deserialize JSON to License struct
 	fullLicense, err := jsonToLicense(content)
 	if err != nil {
 		return NewErrDeserializeFailed(content)
+	}
+
+	// write JSON to disk
+	rawFilePath := filepath.Join(rawPath, l.Key+".json")
+	if err := ioutil.WriteFile(rawFilePath, content, perm); err != nil {
+		return NewErrWriteFileFailed(rawFilePath)
 	}
 
 	// construct template and save template in templates directory
