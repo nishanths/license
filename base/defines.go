@@ -8,7 +8,7 @@ const (
 	TemplatesDirectory = "tmpl"
 	tempDirPrefix      = "license"
 
-	applicationVersion  = "0.1.0"
+	applicationVersion  = "0.1.1"
 	repositoryUrl       = "github.com/nishanths/license"
 	repositoryIssuesUrl = repositoryUrl + "/issues"
 

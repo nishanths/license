@@ -4,6 +4,6 @@ import "fmt"
 
 // Version prints the version number
 func Version() error {
-	fmt.Println(applicationVersion)
+	fmt.Println("v" + applicationVersion)
 	return nil
 }
