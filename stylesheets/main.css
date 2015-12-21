@@ -260,7 +260,7 @@ pre {
 }
 code {
   background: #f8f8f8;
-  padding: 2px 5px;
+  padding: 3px 6px;
 }
 table {
   width: 100%;
@@ -328,7 +328,6 @@ header a small {
     margin-bottom: 35px;
     padding: 0 30px;
   }
-  section.usage .content .usage-piece code,
   section.usage .content .usage-piece pre {
     padding: 10px;
   }
