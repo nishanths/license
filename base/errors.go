@@ -155,7 +155,7 @@ func (err *errCopyTreeFailed) Error() string {
 func NewErrReadFailed() error {
 	return &errReadFailed{
 		"failed to read license(s)",
-		"try again after running \"license update\"",
+		"try again after running \"license update -v\"",
 	}
 }
 
