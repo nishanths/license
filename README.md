@@ -4,7 +4,7 @@
 
 Create licenses for your open-source projects from the command-line. *Hello, productivity!*
 
-# What is license?
+## What is license?
 
 `license` is a command-line utility to make licenses from the comfort of your terminal. 
 
@@ -16,25 +16,25 @@ Create licenses for your open-source projects from the command-line. *Hello, pro
 * Easy to customize the name, year, and output filename when needed
 
 
-# Demo
+## Demo
 
 <img src="https://zippy.gfycat.com/JoyfulBlandGermanshorthairedpointer.gif" width="700px"/>
 
-# Install
+## Install
 
-#### Using go
+__Homebrew__:
 
-````
-go get github.com/nishanths/license
-````
+```
+brew update
+brew tap nishanths/tap
+brew install nishanths/tap/license
+```
 
-[More info](https://github.com/nishanths/license/wiki/Install-using-go)
+__Using go__: `go get -u github.com/nishanths/license` [(more info)](https://github.com/nishanths/license/wiki/Install-using-go)
 
-#### Download
+__Binary__: get the binary for your platform [here](https://github.com/nishanths/license/wiki/Install-binaries).
 
-Alternatively, download the [binary](https://github.com/nishanths/license/wiki/Install-binaries) for your platform.
-
-# Usage
+## Usage
 
 #### Generate a license
 
@@ -54,15 +54,16 @@ license -o LICENSE.txt isc
 
 More options and commands are described below.
 
-# Options
+## Options
 
 #### Customize name and year on the license
 
-By default, license uses the current year for the year on the generated license. To determine the name, license uses the following algorithm:
+By default, license uses the current year on the generated license. To determine the name, license uses the following algorithm:
 
-* First, it looks at provided command-line arguments
+* First, it looks for command-line arguments
 * If command-line args are absent, it looks at the environment variable `LICENSE_FULL_NAME`
 * Finally, it uses the name from git config and mercurial config
+* As a last resort, it falls back to an empty string
 
 The default ouput is suitable in most cases, but you can also explicitly specify the name and year:
 
@@ -109,11 +110,11 @@ Current list of licenses:
 
 Help text is available by running `license --help`. [View help command output](https://github.com/nishanths/license/wiki/Help-output)
 
-# Contributing
+## Contributing
 
 Pull requests for new features, bug fixes, and suggestions are welcome!
 
-# License
+## License
 
 Licensed under the [MIT License](https://github.com/nishanths/license/blob/master/LICENSE).
 
