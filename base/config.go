@@ -21,7 +21,7 @@ const (
 //   * default (empty string)
 //
 func getName() string {
-	if name, exists := os.LookupEnv(NameEnvVariable); exists {
+	if name := os.Getenv(NameEnvVariable); name != "" {
 		return name
 	} else if name, err := gitconfig.Username(); err == nil {
 		return name
