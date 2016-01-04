@@ -1,92 +1,98 @@
 <!doctype html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width">
-  <meta http-equiv="X-UA-Compatible" content="chrome=1">
-  <meta name="description" content="License is an open source license generator that works from the terminal. Written in Go (golang).">
-  <link rel="stylesheet" href="stylesheets/main.css">
-  <title>License: Command-line license generator</title>
-  <link rel="shortcut icon" href="https://nishanths.github.io/img/leaf.ico">
-  <!--[if lt IE 9]>
-  <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-  <![endif]-->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<meta http-equiv="X-UA-Compatible" content="chrome=1">
+<meta name="description" content="License is an open source license generator that works from the terminal. Written in Go (golang).">
+<link rel="stylesheet" href="stylesheets/main.css">
+<title>License: Command-line license generator</title>
+<link rel="shortcut icon" href="https://nishanths.github.io/img/leaf.ico">
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
 </head>
 <body>
 <!-- fork banner -->
 <a href="https://github.com/nishanths/license"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/52760788cde945287fbb584134c4cbc2bc36f904/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f77686974655f6666666666662e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png"></a>
 <!-- section one -->
 <section class="one">
-  <h1 class="project-name">
-    <a id="license-" class="anchor" href="#license-" aria-hidden="true"><span class="octicon octicon-link"></span></a><a href="https://nishanths.github.io/license">license</a>
-  </h1>
-  <h2 class="tagline">Create LICENSEs from the command-line</h2>
+<h1 class="project-name">
+  <a id="license-" class="anchor" href="#license-" aria-hidden="true"><span class="octicon octicon-link"></span></a><a href="https://nishanths.github.io/license">license</a>
+</h1>
+<h2 class="tagline">Create LICENSEs from the command-line</h2>
 </section>
 <!-- section two -->
 <section class="two">
-  <p><div class="line"><a href="https://github.com/nishanths/license">View the Project on GitHub</a></div></p>
-  <p>
-    <iframe src="https://ghbtns.com/github-btn.html?user=nishanths&repo=license&type=star&count=true&size=small" frameborder="0" scrolling="0" width="90px" height="30px"></iframe><iframe src="https://ghbtns.com/github-btn.html?user=nishanths&repo=license&type=fork&count=true&size=small" frameborder="0" scrolling="0" width="80px" height="30px"></iframe>
-  </p> 
+<p><div class="line"><a href="https://github.com/nishanths/license">View the Project on GitHub</a></div></p>
+<p>
+  <iframe src="https://ghbtns.com/github-btn.html?user=nishanths&repo=license&type=star&count=true&size=small" frameborder="0" scrolling="0" width="90px" height="30px"></iframe><iframe src="https://ghbtns.com/github-btn.html?user=nishanths&repo=license&type=fork&count=true&size=small" frameborder="0" scrolling="0" width="80px" height="30px"></iframe>
+</p> 
 </section>
 <hr>
 <!-- section install -->
 <section class="install">
-  <h1>
-    <a id="install" class="anchor" href="#install" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-    Install
-  </h1>
-  <pre><code>go get github.com/nishanths/license</code></pre>
-  <p><a href="https://github.com/nishanths/license#install">More install options</a></p>
+<h1>
+  <a id="install" class="anchor" href="#install" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+  Install
+</h1>
+<pre style="margin-bottom:1px;"><code><em>$</em> brew tap nishanths/tap</code>
+<code><em>$</em> brew install nishanths/tap/license</code></pre>
+<p style="margin:6px 0 8px;">- OR - </p>
+<pre><code><em>$</em> go get -u github.com/nishanths/license</code></pre>
+<p><a href="https://github.com/nishanths/license#install">More install options</a></p>
 </section>
 <!-- section video -->
 <section class="video">
-    <video src="https://zippy.gfycat.com/JoyfulBlandGermanshorthairedpointer.webm" poster="https://zippy.gfycat.com/JoyfulBlandGermanshorthairedpointer.gif" alt="demo-gif" style="max-width:100%" muted autoplay loop></video>
+  <video src="https://zippy.gfycat.com/JoyfulBlandGermanshorthairedpointer.webm" poster="https://zippy.gfycat.com/JoyfulBlandGermanshorthairedpointer.gif" alt="demo-gif" style="max-width:100%" muted autoplay loop></video>
 </section>
 <!-- section usage -->
 <section class="usage">
-  <h1>
-    <a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-    Usage
-  </h1>
-  <div class="content">
-    <div class="usage-piece">
-      <h3><a id="generating-a-license" class="anchor" href="#generating-a-license" aria-hidden="true"><span class="octicon octicon-link"></span></a>Generate license</h3>
-      <p>To generate a license, simply run <code>license</code> followed by the license name. The following command generates the MIT license:</p>
+<h1>
+  <a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+  Usage
+</h1>
+<div class="content">
+  <div class="usage-piece">
+    <h3><a id="generating-a-license" class="anchor" href="#generating-a-license" aria-hidden="true"><span class="octicon octicon-link"></span></a>Generate license</h3>
+    <p>To generate a license, simply run <code>license</code> followed by the license name. The following command generates the MIT license:</p>
 
-      <div class="highlight highlight-source-shell">
-      <pre><code>license mit</code></pre>
-      </div>
-
-      <p>Run <code>license ls</code> to see a <a href="https://github.com/nishanths/license/wiki/List-of-current-licenses">list of licenses</a>.</p>
-    </div>
-    
-    <div class="usage-piece">
-      <h3>
-      <a id="creating-a-license-file" class="anchor" href="#creating-a-license-file" aria-hidden="true"><span class="octicon octicon-link"></span></a>Create license file</h3>
-
-      <p>Use the <code>-o</code> option to save the license to a file. The following command creates the file <code>LICENSE.txt</code> with the contents of the ISC license:</p>
-
-      <pre><code>license -o LICENSE.txt isc</code></pre>
+    <div class="highlight highlight-source-shell">
+    <pre><code>license mit</code></pre>
     </div>
 
-    <div class="usage-piece">
-      <h3>
-      <a id="creating-a-license-file" class="anchor" href="#creating-a-license-file" aria-hidden="true"><span class="octicon octicon-link"></span></a>Customize name and year</h3>
-
-      <p>The program makes a clever guess for the name and year to use on the license, but you can also explicity specify them:</p>
-
-      <pre><code>license -n Alice -y 2013 isc</code></pre>
-
-      <p>Additional options are described in the <a href="https://github.com/nishanths/license#usage">README</a>.</p>
-    </div>
+    <p>Run <code>license ls</code> to see a <a href="https://github.com/nishanths/license/wiki/List-of-current-licenses">list of licenses</a>.</p>
   </div>
+  
+  <div class="usage-piece">
+    <h3>
+    <a id="creating-a-license-file" class="anchor" href="#creating-a-license-file" aria-hidden="true"><span class="octicon octicon-link"></span></a>Create license file</h3>
+
+    <p>Use the <code>-o</code> option to save the license to a file. The following command creates the file <code>LICENSE.txt</code> with the contents of the ISC license:</p>
+
+    <pre><code>license -o LICENSE.txt isc</code></pre>
+  </div>
+
+  <div class="usage-piece">
+    <h3>
+    <a id="creating-a-license-file" class="anchor" href="#creating-a-license-file" aria-hidden="true"><span class="octicon octicon-link"></span></a>Customize name and year</h3>
+
+    <p>The program makes a clever guess for the name and year to use on the license, but you can also explicity specify them:</p>
+
+    <pre><code>license -n Alice -y 2013 isc</code></pre>
+
+    <p>Additional options are described in the <a href="https://github.com/nishanths/license#usage">README</a>.</p>
+  </div>
+</div>
 </section>
 <!-- section footer -->
 <section class="footer">
-  <div class="line"><a href="https://github.com/nishanths/license">View the Project on GitHub</a></div>
-  <span class="dot-sep"></span>
-  <div class="line">Licensed under the &nbsp;<a href="https://github.com/nishanths/license/blob/master/LICENSE">MIT License</a></small></div>
+<p>
+  <iframe src="https://ghbtns.com/github-btn.html?user=nishanths&repo=license&type=star&count=true&size=large" frameborder="0" scrolling="0" width="130px" height="30px"></iframe>
+</p> 
+<div class="line"><a href="https://github.com/nishanths/license">View the Project on GitHub</a></div>
+<span class="dot-sep"></span>
+<div class="line">Licensed under the &nbsp;<a href="https://github.com/nishanths/license/blob/master/LICENSE">MIT License</a></small></div>
 </section>
 <script src="javascripts/scale.fix.js"></script>
 </body>
