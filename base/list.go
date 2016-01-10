@@ -31,7 +31,7 @@ func getRemoteList() ([]License, error) {
 func printList(licenses []License) {
 	sort.Sort(ByLicenseKey(licenses))
 
-	fmt.Println("Available licenses:\n")
+	fmt.Print("Available licenses:\n\n")
 	for _, l := range licenses {
 		fmt.Printf("%s%-14s(%s)\n", indent, l.Key, l.Name)
 	}
