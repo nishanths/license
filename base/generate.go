@@ -23,7 +23,7 @@ func renderTemplate(t *template.Template, o *renderOption, w io.Writer) error {
 // Generate returns a non-nil error if it is unable to do so successfully.
 func Generate(args []string) error {
 	if len(args) < 1 {
-		return NewErrExpectedLicenseName()
+		return newErrExpectedLicenseName()
 	}
 
 	// use stdout as default writer for now, until
@@ -54,11 +54,11 @@ func Generate(args []string) error {
 	// exit early if there is an error
 	// with args
 	if err != nil {
-		return NewErrParsingArguments()
+		return newErrParsingArguments()
 	}
 
 	if len(result.BadFlags) > 0 {
-		return NewErrBadFlagSyntax(result.BadFlags[0])
+		return newErrBadFlagSyntax(result.BadFlags[0])
 	}
 
 	// normalize:
@@ -83,7 +83,7 @@ func Generate(args []string) error {
 	// get locally available licenses
 	licenses, err := getLocalList()
 	if err != nil {
-		return NewErrReadFailed()
+		return newErrReadFailed()
 	}
 
 	// find license key from remaining args
@@ -99,13 +99,13 @@ search:
 	}
 
 	if licenseKey == "" {
-		return NewErrCannotFindLicense()
+		return newErrCannotFindLicense()
 	}
 
 	tmpl, err := readTemplate(licenseKey)
 
 	if err != nil {
-		return NewErrLoadingTemplate(licenseKey + ".tmpl")
+		return newErrLoadingTemplate(licenseKey + ".tmpl")
 	}
 
 	o := &renderOption{
@@ -117,14 +117,14 @@ search:
 	if filename != "" {
 		var err error
 		if w, err = os.Create(filename); err != nil {
-			return NewErrWriteFileFailed(filename)
+			return newErrWriteFileFailed(filename)
 		}
 	}
 
 	// execute template on file
 	if err := renderTemplate(tmpl, o, w); err != nil {
 		os.Remove(filename)
-		return NewErrExecutingTemplate(tmpl)
+		return newErrExecutingTemplate(tmpl)
 	}
 
 	return nil

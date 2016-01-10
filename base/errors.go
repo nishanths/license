@@ -8,6 +8,7 @@ import (
 // generalized error types
 
 // basic errors
+
 type errBasicError struct {
 	Description, Suggestion string
 }
@@ -15,12 +16,12 @@ type errBasicError struct {
 func basicErrorString(d, s string) string {
 	if s != "" {
 		return fmt.Sprintf("license: %s\nlicense: %s", d, s)
-	} else {
-		return fmt.Sprintf("license: %s", d)
 	}
+	return fmt.Sprintf("license: %s", d)
 }
 
 // data errors
+
 type errDataError struct {
 	Description, Suggestion string
 	Data                    interface{}
@@ -29,12 +30,13 @@ type errDataError struct {
 func dataErrorString(d, s string, data interface{}) string {
 	if s != "" {
 		return fmt.Sprintf("license: %s %v\nlicense: %s", d, data, s)
-	} else {
-		return fmt.Sprintf("license: %s %v", d, data)
 	}
+	return fmt.Sprintf("license: %s %v", d, data)
+
 }
 
 // argument errors
+
 type errArgumentError struct {
 	Description, Suggestion string
 	Args                    []string
@@ -43,9 +45,9 @@ type errArgumentError struct {
 func argumentErrorString(d, s string, args []string) string {
 	if s != "" {
 		return fmt.Sprintf("license: %s %v\nlicense: %s", d, args, s)
-	} else {
-		return fmt.Sprintf("license: %s %v", d, args)
 	}
+	return fmt.Sprintf("license: %s %v", d, args)
+
 }
 
 // path errors
@@ -57,14 +59,15 @@ type errPathError struct {
 func pathErrorString(d, s string, paths []string) string {
 	if s != "" {
 		return fmt.Sprintf("license: %s %v\nlicense: %s", d, paths, s)
-	} else {
-		return fmt.Sprintf("license: %s %v", d, paths)
 	}
+	return fmt.Sprintf("license: %s %v", d, paths)
+
 }
 
 // specific error types
 
 // basic errors
+
 type errReadFailed errBasicError
 type errFetchFailed errBasicError
 type errParsingArguments errBasicError
@@ -92,6 +95,7 @@ func (err *errCannotFindLicense) Error() string {
 }
 
 // data errors
+
 type errSerializeFailed errDataError
 type errDeserializeFailed errDataError
 type errLoadingTemplate errDataError
@@ -111,6 +115,7 @@ func (err *errExecutingTemplate) Error() string {
 }
 
 // argument errors
+
 type errUnknownArgument errArgumentError
 type errBadArgumentSyntax errArgumentError
 
@@ -122,6 +127,7 @@ func (err *errBadArgumentSyntax) Error() string {
 }
 
 // path errors
+
 type errCreateTempDirFailed errPathError
 type errWriteFileFailed errPathError
 type errCreateDirFailed errPathError
@@ -141,6 +147,7 @@ func (err *errRemovePathFailed) Error() string {
 }
 
 // copy tree error
+
 type errCopyTreeFailed struct {
 	From, To string
 }
@@ -152,40 +159,41 @@ func (err *errCopyTreeFailed) Error() string {
 // constructors
 
 // basic errors
-func NewErrReadFailed() error {
+
+func newErrReadFailed() error {
 	return &errReadFailed{
 		"failed to read license(s)",
 		"try again after running \"license update -v\"",
 	}
 }
 
-func NewErrFetchFailed() error {
+func newErrFetchFailed() error {
 	return &errFetchFailed{
 		"failed to fetch license(s)",
 		"check your internet connection and try again",
 	}
 }
 
-func NewErrParsingArguments() error {
+func newErrParsingArguments() error {
 	return &errParsingArguments{
 		"error parsing arguments", "",
 	}
 }
 
-func NewErrCannotLocateHomeDir() error {
+func newErrCannotLocateHomeDir() error {
 	return &errCannotLocateHomeDir{
 		"unable to locate home directory", "",
 	}
 }
 
-func NewErrExpectedLicenseName() error {
+func newErrExpectedLicenseName() error {
 	return &errExpectedLicenseName{
 		"expected license name",
 		"see \"license help\" for more details",
 	}
 }
 
-func NewErrCannotFindLicense() error {
+func newErrCannotFindLicense() error {
 	return &errCannotFindLicense{
 		"unable to find given command or license",
 		"run \"license ls\" for a list of available licenses or see \"license help\"",
@@ -193,65 +201,68 @@ func NewErrCannotFindLicense() error {
 }
 
 // data errors
-func NewErrSerializeFailed(l interface{}) error {
+
+func newErrSerializeFailed(l interface{}) error {
 	return &errSerializeFailed{
 		"failed to serialize license(s)",
-		fmt.Sprintf("please create an issue at %s", repositoryIssuesUrl),
+		fmt.Sprintf("please create an issue at %s", repositoryIssuesURL),
 		l,
 	}
 }
 
-func NewErrDeserializeFailed(data []byte) error {
+func newErrDeserializeFailed(data []byte) error {
 	return &errDeserializeFailed{
 		"failed to deserialize license(s)",
-		fmt.Sprintf("please create an issue at %s", repositoryIssuesUrl),
+		fmt.Sprintf("please create an issue at %s", repositoryIssuesURL),
 		string(data),
 	}
 }
 
-func NewErrLoadingTemplate(name string) error {
+func newErrLoadingTemplate(name string) error {
 	return &errLoadingTemplate{
 		"failed to load template",
-		fmt.Sprintf("please create an issue at %s", repositoryIssuesUrl),
+		fmt.Sprintf("please create an issue at %s", repositoryIssuesURL),
 		name,
 	}
 }
 
-func NewErrExecutingTemplate(t *template.Template) error {
+func newErrExecutingTemplate(t *template.Template) error {
 	return &errExecutingTemplate{
 		"failed to execute template",
-		fmt.Sprintf("please create an issue at %s", repositoryIssuesUrl),
+		fmt.Sprintf("please create an issue at %s", repositoryIssuesURL),
 		t,
 	}
 }
 
 // path errors
-func NewErrCreateTempDirFailed(p ...string) error {
+
+func newErrCreateTempDirFailed(p ...string) error {
 	return &errCreateTempDirFailed{
 		"failed to create temporary directory", "", p,
 	}
 }
 
-func NewErrCreateDirFailed(p ...string) error {
+func newErrCreateDirFailed(p ...string) error {
 	return &errCreateDirFailed{
 		"failed to create directory", "", p,
 	}
 }
 
-func NewErrRemovePathFailed(p ...string) error {
+func newErrRemovePathFailed(p ...string) error {
 	return &errRemovePathFailed{
 		"failed to remove path", "", p,
 	}
 }
 
-func NewErrWriteFileFailed(p ...string) error {
+func newErrWriteFileFailed(p ...string) error {
 	return &errWriteFileFailed{
 		"failed to write file", "", p,
 	}
 }
 
 // argument errors
-func NewErrUnknownArgument(args ...string) error {
+
+func newErrUnknownArgument(args ...string) error {
 	return &errUnknownArgument{
 		"unknown argument",
 		"see \"license help\" for more details",
@@ -259,7 +270,7 @@ func NewErrUnknownArgument(args ...string) error {
 	}
 }
 
-func NewErrBadFlagSyntax(args ...string) error {
+func newErrBadFlagSyntax(args ...string) error {
 	return &errBadArgumentSyntax{
 		"bad flag",
 		"see \"license help\" for more details",
@@ -268,6 +279,7 @@ func NewErrBadFlagSyntax(args ...string) error {
 }
 
 // copy tree error
-func NewErrCopyTreeFailed(from, to string) error {
+
+func newErrCopyTreeFailed(from, to string) error {
 	return &errCopyTreeFailed{From: from, To: to}
 }

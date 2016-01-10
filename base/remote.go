@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	gitHubClientIdEnvVariable     = "GITHUB_CLIENT_ID"
+	gitHubClientIDEnvVariable     = "GITHUB_CLIENT_ID"
 	gitHubClientSecretEnvVariable = "GITHUB_CLIENT_SECRET"
 	gitHubAPIBaseURL              = "https://api.github.com"
 	gitHubAPILicensesPath         = "/licenses"
@@ -29,7 +29,7 @@ func fetch(req *http.Request) ([]byte, error) {
 	req.Header.Add("Accept", gitHubAPIAccept)
 
 	// query string
-	queryOpt := option{os.Getenv(gitHubClientIdEnvVariable), os.Getenv(gitHubClientSecretEnvVariable)}
+	queryOpt := option{os.Getenv(gitHubClientIDEnvVariable), os.Getenv(gitHubClientSecretEnvVariable)}
 	queryValues, err := query.Values(queryOpt)
 	if err != nil {
 		return nil, err

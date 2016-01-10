@@ -9,8 +9,8 @@ const (
 	tempDirPrefix      = "license"
 
 	applicationVersion  = "0.1.2"
-	repositoryUrl       = "github.com/nishanths/license"
-	repositoryIssuesUrl = repositoryUrl + "/issues"
+	repositoryURL       = "github.com/nishanths/license"
+	repositoryIssuesURL = repositoryURL + "/issues"
 
 	indent = "    "
 	perm   = 0700
