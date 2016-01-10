@@ -14,7 +14,7 @@ var placeholders = map[string]string{ // depends on api.github.com format
 var placeholdersRx *regexp.Regexp
 
 func init() {
-	keys := make([]string, 0)
+	var keys []string
 	for key := range placeholders {
 		keys = append(keys, key)
 	}
@@ -35,7 +35,7 @@ func textTemplateString(l *License) string {
 }
 
 func jsonToList(content []byte) ([]License, error) {
-	licenses := make([]License, 0)
+	var licenses []License
 	if err := json.Unmarshal(content, &licenses); err != nil {
 		return nil, err
 	}

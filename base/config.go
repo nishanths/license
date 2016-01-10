@@ -7,6 +7,8 @@ import (
 )
 
 const (
+	// NameEnvVariable is the environment variable to lookup in the process
+	// of determining the author's name to use on the license.
 	NameEnvVariable = "LICENSE_FULL_NAME"
 	defaultName     = ""
 )

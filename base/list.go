@@ -44,7 +44,7 @@ func ListLocal() error {
 	licenses, err := getLocalList()
 
 	if err != nil {
-		return NewErrReadFailed()
+		return newErrReadFailed()
 	}
 
 	printList(licenses)
@@ -57,7 +57,7 @@ func ListRemote() error {
 	licenses, err := getRemoteList()
 
 	if err != nil {
-		return NewErrFetchFailed()
+		return newErrFetchFailed()
 	}
 
 	printList(licenses)
