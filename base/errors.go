@@ -32,7 +32,6 @@ func dataErrorString(d, s string, data interface{}) string {
 		return fmt.Sprintf("license: %s %v\nlicense: %s", d, data, s)
 	}
 	return fmt.Sprintf("license: %s %v", d, data)
-
 }
 
 // argument errors
@@ -47,10 +46,10 @@ func argumentErrorString(d, s string, args []string) string {
 		return fmt.Sprintf("license: %s %v\nlicense: %s", d, args, s)
 	}
 	return fmt.Sprintf("license: %s %v", d, args)
-
 }
 
 // path errors
+
 type errPathError struct {
 	Description, Suggestion string
 	Paths                   []string
@@ -61,7 +60,6 @@ func pathErrorString(d, s string, paths []string) string {
 		return fmt.Sprintf("license: %s %v\nlicense: %s", d, paths, s)
 	}
 	return fmt.Sprintf("license: %s %v", d, paths)
-
 }
 
 // specific error types
