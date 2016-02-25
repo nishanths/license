@@ -4,6 +4,7 @@ import (
 	"github.com/tcnksm/go-gitconfig"
 	"gopkg.in/nishanths/go-hgconfig.v1"
 	"os"
+	"os/user"
 )
 
 const (
@@ -20,6 +21,7 @@ const (
 //   * user.name from local git config
 //   * user.name from global git config
 //   * ui.username from hg config
+//   * current user's name via `os/user`
 //   * default (empty string)
 //
 func getName() string {
@@ -31,6 +33,8 @@ func getName() string {
 		return name
 	} else if name, err := hgconfig.Username(); err == nil {
 		return name
+	} else if usr, err := user.Current(); err == nil {
+		return usr.Name
 	} else {
 		return defaultName
 	}
