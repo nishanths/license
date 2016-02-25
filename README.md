@@ -62,7 +62,8 @@ By default, license uses the current year on the generated license. To determine
 
 * First, it looks for command-line arguments
 * If command-line args are absent, it looks at the environment variable `LICENSE_FULL_NAME`
-* Finally, it uses the name from git config and mercurial config
+* It then tries the name from git config and mercurial config
+* Finally, it uses the current user's name via `os/user`
 * As a last resort, it falls back to an empty string
 
 The default ouput is suitable in most cases, but you can also explicitly specify the name and year:
