@@ -1,87 +1,154 @@
 package main
 
 import (
-	"fmt"
-	"github.com/mitchellh/go-homedir"
-	"github.com/nishanths/license/base"
+	"errors"
+	"flag"
+	"log"
 	"os"
-	"path"
-	"sync"
+	"os/user"
+	"strconv"
 	"time"
+
+	"github.com/nishanths/go-hgconfig"
+	"github.com/tcnksm/go-gitconfig"
 )
 
-// pathExists returns true if the path exists.
-func pathExists(p string) bool {
-	if _, err := os.Stat(p); os.IsNotExist(err) {
-		return false
-	}
-	return true
+const (
+	nameEnv       = "LICENSE_FULL_NAME"
+	versionString = "1.0.0"
+	usageString   = "license [FLAGS] [LICENSE NAME]"
+	helpString    = `usage: ` + usageString + `
+
+Flags:
+       -help     print help information
+       -list     list available licenses
+   -n, -name     full name on license (default %q)
+   -o, -output   output filename (prints to stdout if not specified)
+       -update   update to latest licenses from GitHub
+       -version  print version
+   -y, -year     year on license (default %q)
+
+Examples:
+  license mit 
+  license -name Alice isc
+  license -o LICENSE.txt mpl-2.0`
+)
+
+var (
+	logger    = log.New(os.Stdout, "", 0)
+	errLogger = log.New(os.Stderr, "", 0)
+	flags     = struct {
+		License string // Type of license.
+		Name    string // Name on license.
+		Year    string // Year on license.
+		Output  string // Output file.
+		Version bool
+		Help    bool
+		List    bool
+		Update  bool
+	}{}
+)
+
+func setupFlags() {
+	flag.StringVar(&flags.Name, "name", name(), "name on license")
+	flag.StringVar(&flags.Name, "n", name(), "name on license")
+
+	flag.StringVar(&flags.Year, "year", year(), "year on license")
+	flag.StringVar(&flags.Year, "y", year(), "year on license")
+
+	flag.StringVar(&flags.Output, "output", "", "path to output file")
+	flag.StringVar(&flags.Output, "o", "", "path to output file")
+
+	flag.BoolVar(&flags.Version, "version", false, "print version")
+	flag.BoolVar(&flags.Help, "help", false, "print help")
+	flag.BoolVar(&flags.List, "list", false, "print available licenses")
+	flag.BoolVar(&flags.Update, "update", false, "get latest licenses")
+
 }
 
-// main returns exit code 0 on success
-// and exit code 1 on error.
-// Errors, if any, are sent to stderr.
-// Other program output is sent to stdout.
+var ErrMissingArg = errors.New("error: require license name")
+
+func checkFlags() error {
+	if flags.License == "" && !(flags.Update || flags.Version || flags.Help || flags.List) {
+		return ErrMissingArg
+	}
+	return nil
+}
+
 func main() {
-	args := os.Args[1:]
-	var wg sync.WaitGroup
-	var mainErr error
+	setupFlags()
+	flag.Usage = usage
+	flag.Parse()
 
-	// * Check existence of license data directory
-	// and start making it if it is not present.
-	// * Also, another time we update is around once every 20 runs
-	// so that the licenses list is up to date.
-	// * If we cannot find the home directory, we silently ignore the issue
-	// for now; the specific command function will return an error when called.
-	if home, err := homedir.Dir(); err == nil {
-		updateRequired := (time.Now().Unix() % 20) == 0
-		bootstrapRequired := !pathExists(path.Join(home, base.LicenseDirectory, base.DataDirectory))
-		repetitiveCommand := len(args) > 0 && (args[0] == "update" || args[0] == "bootstrap")
+	flags.License = flag.Arg(0)
 
-		if (updateRequired || bootstrapRequired) && !(repetitiveCommand) {
-			wg.Add(1)
-
-			go func() {
-				defer wg.Done()
-				base.Bootstrap([]string{"--quiet"})
-			}()
-		}
-	}
-
-	if len(args) < 1 {
-		mainErr = base.Help()
-	} else {
-		command := args[0]
-
-		switch command {
-		case "--help", "help":
-			mainErr = base.Help()
-
-		case "--version", "version":
-			mainErr = base.Version()
-
-		case "update", "bootstrap":
-			mainErr = base.Bootstrap(args[1:])
-
-		case "ls-remote", "list-remote":
-			mainErr = base.ListRemote()
-
-		case "ls", "list":
-			wg.Wait()
-			mainErr = base.ListLocal()
-
-		default:
-			wg.Wait()
-			mainErr = base.Generate(args)
-		}
-	}
-
-	wg.Wait()
-
-	if mainErr != nil {
-		fmt.Fprintln(os.Stderr, mainErr)
+	if err := checkFlags(); err != nil {
+		errLogger.Println(err)
+		usage()
 		os.Exit(1)
 	}
 
+	mainImpl()
+}
+
+func mainImpl() {
+	// If any of the -version, -help, -list, or -update flags
+	// is specified, the rest of the arguments is ignored.
+
+	switch {
+	case flags.Version:
+		version()
+	case flags.Help:
+		help()
+	case flags.List:
+		list()
+	case flags.Update:
+		update()
+	}
+
+	generate()
+	os.Exit(2)
+}
+
+func version() {
+	errLogger.Printf("v%s\n", versionString)
 	os.Exit(0)
+}
+
+func help() {
+	errLogger.Printf(helpString+"\n", name(), year())
+	os.Exit(0)
+}
+
+func usage() {
+	errLogger.Println("usage: " + usageString)
+	errLogger.Println("see 'license -help' for more details")
+}
+
+func name() string {
+	n := os.Getenv(nameEnv)
+	if n != "" {
+		return n
+	}
+	n, err := gitconfig.Username()
+	if err == nil {
+		return n
+	}
+	n, err = gitconfig.Global("user.name")
+	if err != nil {
+		return n
+	}
+	n, err = hgconfig.Username()
+	if err != nil {
+		return n
+	}
+	usr, err := user.Current()
+	if err != nil {
+		return usr.Name
+	}
+	return ""
+}
+
+func year() string {
+	return strconv.Itoa(time.Now().Year())
 }
