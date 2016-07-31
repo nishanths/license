@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"io"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 
@@ -35,6 +36,12 @@ func doGenerate() error {
 	home, err := homedir.Dir()
 	if err != nil {
 		return err
+	}
+
+	if _, err := os.Stat(path.Join(home, ".license")); os.IsNotExist(err) {
+		if err := doUpdate(); err != nil {
+			return err
+		}
 	}
 
 	p := filepath.Join(home, ".license", "data", "tmpl", flags.License+".tmpl")
