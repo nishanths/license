@@ -59,6 +59,7 @@ func doGenerate() error {
 		if err != nil {
 			return err
 		}
+		defer f.Close()
 		out = f
 	}
 

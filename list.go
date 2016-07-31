@@ -19,10 +19,8 @@ func (a ByKey) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a ByKey) Less(i, j int) bool { return a[i].Key < a[j].Key }
 
 // printList prints the supplied list of licenses to stdout.
-// The list is sorted by the Key field before printing.
 func printList(l []license.License) {
-	sort.Sort(ByKey(l))
-	logger.Print("Available licenses:\n")
+	logger.Println("Available licenses:")
 	for _, l := range l {
 		logger.Printf("  %-14s(%s)\n", l.Key, l.Name)
 	}
@@ -48,6 +46,7 @@ func list() {
 		errLogger.Println("failed to open licenses.json", err)
 		os.Exit(1)
 	}
+	defer r.Close()
 
 	var lics []license.License
 	if err := json.NewDecoder(r).Decode(&lics); err != nil {
@@ -55,6 +54,7 @@ func list() {
 		os.Exit(1)
 	}
 
+	sort.Sort(ByKey(lics))
 	printList(lics)
 	os.Exit(0)
 }
