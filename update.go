@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"os"
 	"path"
@@ -65,7 +66,7 @@ func doUpdate() error {
 
 	lics, err := c.List()
 	if err != nil {
-		return err
+		return convertAPIError(err)
 	}
 
 	f, err := os.Create(filepath.Join(tempRoot, "data", "licenses.json"))
@@ -90,7 +91,7 @@ func doUpdate() error {
 
 			l, err := c.Info(l.Key)
 			if err != nil {
-				errs[i] = err
+				errs[i] = convertAPIError(err)
 				return
 			}
 
@@ -125,8 +126,22 @@ func doUpdate() error {
 	return os.Rename(tempRoot, licensePath)
 }
 
+// convertAPIError handles HTTP errors as a special case
+// because simply logging the error may print the client ID
+// and client secret as part of the error message URL.
+func convertAPIError(err error) error {
+	switch err.(type) {
+	case nil:
+		return nil
+	case license.StatusError:
+		return err
+	default:
+		return errors.New("error: failed to fetch licenses")
+	}
+}
+
 var (
-	// placeholders is a map from placeholders in the JSON
+	// placeholders is a map from placeholders in GitHub's JSON
 	// to placeholders we use in templates.
 	// The keys should be kept in sync with the regex below.
 	placeholders = map[string]string{
