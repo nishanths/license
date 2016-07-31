@@ -26,7 +26,7 @@ go get -u github.com/nishanths/license
 
 #### Generate a license
 
-To prints a license to stdout, run `license` followed by the license name:
+To print a license to stdout, run `license` followed by the license name:
 
 ```
 license mit
