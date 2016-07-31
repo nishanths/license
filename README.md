@@ -20,7 +20,7 @@ Using go:
 go get -u github.com/nishanths/license
 ``` 
 
-[more info](https://github.com/nishanths/license/wiki/Install-using-go)
+[more info](https://golang.org/doc/install#install)
 
 ## Usage
 
