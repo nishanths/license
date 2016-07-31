@@ -22,25 +22,20 @@
 </h1>
 <h2 class="tagline">Create LICENSEs from the command-line</h2>
 </section>
-<!-- section two -->
-<section class="two">
-<p><div class="line"><a href="https://github.com/nishanths/license">View the Project on GitHub</a></div></p>
-<p>
-  <iframe src="https://ghbtns.com/github-btn.html?user=nishanths&repo=license&type=star&count=true&size=small" frameborder="0" scrolling="0" width="90px" height="30px"></iframe><iframe src="https://ghbtns.com/github-btn.html?user=nishanths&repo=license&type=fork&count=true&size=small" frameborder="0" scrolling="0" width="80px" height="30px"></iframe>
-</p> 
-</section>
-<hr>
 <!-- section install -->
 <section class="install">
 <h1>
   <a id="install" class="anchor" href="#install" aria-hidden="true"><span class="octicon octicon-link"></span></a>
   Install
 </h1>
-<pre style="margin-bottom:1px;"><code><em>$</em> brew tap nishanths/tap</code>
-<code><em>$</em> brew install nishanths/tap/license</code></pre>
-<p style="margin:6px 0 8px;">- OR - </p>
-<pre><code><em>$</em> go get -u github.com/nishanths/license</code></pre>
-<p><a href="https://github.com/nishanths/license#install">More install options</a></p>
+<pre><code>go get -u github.com/nishanths/license</code></pre>
+</section>
+<!-- section two -->
+<section class="two">
+<p><div class="line"><a href="https://github.com/nishanths/license">View on GitHub</a></div></p>
+<p>
+  <iframe src="https://ghbtns.com/github-btn.html?user=nishanths&repo=license&type=star&count=true&size=small" frameborder="0" scrolling="0" width="90px" height="30px"></iframe><iframe src="https://ghbtns.com/github-btn.html?user=nishanths&repo=license&type=fork&count=true&size=small" frameborder="0" scrolling="0" width="90px" height="30px"></iframe>
+</p> 
 </section>
 <!-- section video -->
 <section class="video">
@@ -55,13 +50,14 @@
 <div class="content">
   <div class="usage-piece">
     <h3><a id="generating-a-license" class="anchor" href="#generating-a-license" aria-hidden="true"><span class="octicon octicon-link"></span></a>Generate license</h3>
-    <p>To generate a license, simply run <code>license</code> followed by the license name. The following command generates the MIT license:</p>
+    <p>To print a license a license to stdout, simply run <code>license</code> followed by
+    the license name:</p>
 
     <div class="highlight highlight-source-shell">
     <pre><code>license mit</code></pre>
     </div>
 
-    <p>Run <code>license ls</code> to see a <a href="https://github.com/nishanths/license/wiki/List-of-current-licenses">list of licenses</a>.</p>
+    <p>Run <code>license -list</code>to see the list of licenses</a>.</p>
   </div>
   
   <div class="usage-piece">
@@ -81,7 +77,7 @@
 
     <pre><code>license -n Alice -y 2013 isc</code></pre>
 
-    <p>Additional options are described in the <a href="https://github.com/nishanths/license#usage">README</a>.</p>
+    <p>Additional options are described in <code>license -help</code> and in the <a href="https://github.com/nishanths/license#usage">README</a>.</p>
   </div>
 </div>
 </section>
@@ -90,7 +86,7 @@
 <p>
   <iframe src="https://ghbtns.com/github-btn.html?user=nishanths&repo=license&type=star&count=true&size=large" frameborder="0" scrolling="0" width="130px" height="30px"></iframe>
 </p> 
-<div class="line"><a href="https://github.com/nishanths/license">View the Project on GitHub</a></div>
+<div class="line"><a href="https://github.com/nishanths/license">View on GitHub</a></div>
 <span class="dot-sep"></span>
 <div class="line">Licensed under the &nbsp;<a href="https://github.com/nishanths/license/blob/master/LICENSE">MIT License</a></small></div>
 </section>
