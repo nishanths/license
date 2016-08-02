@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
@@ -77,7 +78,7 @@ func doUpdate() error {
 
 	lics, err := c.List()
 	if err != nil {
-		return convertAPIError(err)
+		return handleAPIError(err)
 	}
 
 	f, err := os.Create(filepath.Join(tempRoot, "data", "licenses.json"))
@@ -102,7 +103,7 @@ func doUpdate() error {
 
 			l, err := c.Info(l.Key)
 			if err != nil {
-				errs[i] = convertAPIError(err)
+				errs[i] = handleAPIError(err)
 				return
 			}
 
@@ -137,14 +138,21 @@ func doUpdate() error {
 	return shutil.CopyTree(tempRoot, licensePath, nil)
 }
 
-// convertAPIError handles HTTP errors as a special case
-// because simply logging the error may print the client ID
-// and client secret as part of the error message URL.
-func convertAPIError(err error) error {
-	switch err.(type) {
+// handleAPIError handles HTTP errors as a special case:
+//   - simply logging the error may print the client ID
+//     and client secret as part of the error message URL.
+//   - if err is StatusError (403, API rate limit...)
+//     then print -auth flag instructions.
+func handleAPIError(err error) error {
+	switch e := err.(type) {
 	case nil:
 		return nil
 	case license.StatusError:
+		if e.StatusCode == 403 && strings.Contains(e.Details.Message, "API rate limit") {
+			return fmt.Errorf("%s\n\n%s\n%s", e.Error(),
+				`use a GitHub personal access token with the "-auth" flag.`,
+				`see https://github.com/settings/tokens and "license -help" for more details.`)
+		}
 		return err
 	default:
 		return errors.New("error: failed to fetch licenses")
