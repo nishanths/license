@@ -58,11 +58,22 @@ To determine the name, license uses the following in order. Since you likely hav
 - empty string
 ```
 
+## Authentication
+
+If you receive a `403 Forbidden: API rate limit exceeded` while updating licenses, use your GitHub username and a [personal access token](https://github.com/settings/tokens) (no scopes required).
+
+```
+license -auth username:e0a8a01b1f125a785ea3d7ada98eb6a018e2fe4f -update
+```
+
+(The token above will not work.)
+
 ## More docs
 
 Help is available by runnning `license -help`
 
 View the list of available licenses by running `license -list`
+
 
 ## Contributing
 
