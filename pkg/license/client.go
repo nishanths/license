@@ -52,6 +52,11 @@ func (e StatusError) Error() string {
 // Client represents a HTTP client for making requests to the
 // GitHub Licenses API. Use NewClient to create a Client
 // ready for use.
+//
+// If Token and Username are both set in Config, they are used for
+// authentication. Otherwise, if ClientID and ClientSecret
+// are both set, they are used for authentication. If none of the
+// above fields are set, no authentication is used.
 type Client struct {
 	HTTPClient *http.Client
 	Config
@@ -70,13 +75,19 @@ func NewClient() *Client {
 
 // Config is configuration for Client.
 type Config struct {
+	// Token is GitHub personal API token for authentication.
+	Token string
+
+	// Username is GitHub username for authentication.
+	Username string
+
 	// ClientID is the GitHub client ID for the API.
 	// See https://developer.github.com/v3/oauth/.
 	// If either ClientID or ClientSecret is empty,
 	// then ClientID and ClientSecret are not included in the request.
 	ClientID string
 
-	// ClientSecret is the GitHub client Secret for the API.
+	// ClientSecret is the GitHub client secret for the API.
 	// See https://developer.github.com/v3/oauth/.
 	ClientSecret string
 
@@ -90,23 +101,19 @@ type Config struct {
 }
 
 func (c *Client) makeQuery(vals url.Values) string {
-	v := vals.Encode()
-	auth := url.Values{
-		"client_id":     []string{c.ClientID},
-		"client_secret": []string{c.ClientSecret},
-	}
-	av := auth.Encode()
-
-	query := v
-	if query != "" {
-		if av != "" {
-			query += "&" + av
-		}
-	} else {
-		query = av
+	// Shallow copy, but OK.
+	query := url.Values{}
+	for k, v := range vals {
+		query[k] = v
 	}
 
-	return query
+	if (c.Token == "" && c.Username == "") &&
+		(c.ClientID != "" && c.ClientSecret != "") {
+		query["client_id"] = []string{c.ClientID}
+		query["client_secret"] = []string{c.ClientSecret}
+	}
+
+	return query.Encode()
 }
 
 func (c *Client) addHeaders(req *http.Request) {
@@ -123,8 +130,8 @@ func (c *Client) addHeaders(req *http.Request) {
 }
 
 func (c *Client) doReq(method, path string, body io.Reader, vals url.Values) (io.ReadCloser, error) {
-	q := c.makeQuery(vals)
 	u := c.BaseURL + path
+	q := c.makeQuery(vals)
 	if q != "" {
 		u += "?" + q
 	}
@@ -132,6 +139,10 @@ func (c *Client) doReq(method, path string, body io.Reader, vals url.Values) (io
 	req, err := http.NewRequest(method, u, body)
 	if err != nil {
 		return nil, err
+	}
+
+	if c.Username != "" && c.Token != "" {
+		req.SetBasicAuth(c.Username, c.Token)
 	}
 
 	c.addHeaders(req)
@@ -154,7 +165,7 @@ func (c *Client) doReq(method, path string, body io.Reader, vals url.Values) (io
 	return res.Body, nil
 }
 
-// List returns a list of licenses.
+// List returns the list of licenses.
 // Only the following fields will be set in returned licenses.
 //   Key, Name, URL, Featured
 func (c *Client) List() ([]License, error) {
@@ -171,7 +182,7 @@ func (c *Client) List() ([]License, error) {
 	return lics, err
 }
 
-// Info returns the License for key.
+// Info returns the license for key.
 // Example keys are "mit", "lgpl-3.0", etc.
 func (c *Client) Info(key string) (License, error) {
 	data, err := c.InfoJSON(key)
@@ -187,8 +198,10 @@ func (c *Client) Info(key string) (License, error) {
 	return lic, err
 }
 
-// InfoJSON returns the raw JSON response for key.
+// InfoJSON returns the license as raw JSON for key.
 // Example keys are "mit", "lgpl-3.0", etc.
+// If the error is non-nil, the caller is reponsible
+// for closing the returned io.ReadCloser.
 func (c *Client) InfoJSON(key string) (io.ReadCloser, error) {
 	return c.doReq("GET", "/"+key, nil, nil)
 }
