@@ -59,8 +59,18 @@ func doUpdate() error {
 	defer os.RemoveAll(tempRoot)
 
 	c := license.NewClient()
-	c.ClientID = os.Getenv("GITHUB_CLIENT_ID")
-	c.ClientSecret = os.Getenv("GITHUB_CLIENT_SECRET")
+	if flags.Auth != "" {
+		p := strings.Split(flags.Auth, ":")
+		if len(p) == 2 {
+			c.Username = p[0]
+			c.Token = p[1]
+		} else {
+			return errors.New(`license: auth should be in format "username:token"`)
+		}
+	} else {
+		c.ClientID = os.Getenv("GITHUB_CLIENT_ID")
+		c.ClientSecret = os.Getenv("GITHUB_CLIENT_SECRET")
+	}
 
 	// Write licenses.json.
 

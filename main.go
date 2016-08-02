@@ -20,11 +20,12 @@ const (
 	helpString    = `usage: ` + usageString + `
 
 Flags:
+       -auth     GitHub credentials in format "username:token" (optional) for update
        -help     print help information
        -list     list available licenses
    -n, -name     full name on license (default %q)
    -o, -output   output filename (prints to stdout if not specified)
-       -update   update to latest licenses from GitHub
+       -update   update all licenses to latest from GitHub
        -version  print version
    -y, -year     year on license (default %q)
 
@@ -42,6 +43,7 @@ var (
 		Name    string // Name on license.
 		Year    string // Year on license.
 		Output  string // Output file.
+		Auth    string
 		Version bool
 		Help    bool
 		List    bool
@@ -59,6 +61,7 @@ func setupFlags() {
 	flag.StringVar(&flags.Output, "output", "", "path to output file")
 	flag.StringVar(&flags.Output, "o", "", "path to output file")
 
+	flag.StringVar(&flags.Auth, "auth", "", "GitHub authentication")
 	flag.BoolVar(&flags.Version, "version", false, "print version")
 	flag.BoolVar(&flags.Help, "help", false, "print help")
 	flag.BoolVar(&flags.List, "list", false, "print available licenses")
