@@ -19,6 +19,12 @@
 			"path": "github.com/tcnksm/go-gitconfig",
 			"revision": "6411ba19847f20afe47f603328d97aaeca6def6f",
 			"revisionTime": "2015-05-05T15:10:06Z"
+		},
+		{
+			"checksumSHA1": "LZo8vQVFKAlcFWgpV6PnztAFy2o=",
+			"path": "github.com/termie/go-shutil",
+			"revision": "bcacb06fecaeec8dc42af03c87c6949f4a05c74c",
+			"revisionTime": "2014-07-29T21:59:57Z"
 		}
 	],
 	"rootPath": "github.com/nishanths/license"
