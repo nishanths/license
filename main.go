@@ -20,7 +20,7 @@ const (
 	helpString    = `usage: ` + usageString + `
 
 Flags:
-       -auth     GitHub credentials in format "username:token" (optional) for update
+       -auth     GitHub credentials in format "username:token" for updating licenses (optional)
        -help     print help information
        -list     list available licenses
    -n, -name     full name on license (default %q)
