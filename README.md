@@ -1,8 +1,12 @@
-# [license](https://github.com/nishanths/license) 
+# [license](https://github.com/nishanths/license) [![wercker status](https://app.wercker.com/status/1407b8c71c720358bf15eeb5815f99bd/s "wercker status")](https://app.wercker.com/project/bykey/1407b8c71c720358bf15eeb5815f99bd)
 
-[![wercker status](https://app.wercker.com/status/1407b8c71c720358bf15eeb5815f99bd/s "wercker status")](https://app.wercker.com/project/bykey/1407b8c71c720358bf15eeb5815f99bd)
+## Install
 
-Create licenses from the command-line. *Hello, productivity!*
+```
+go get -u github.com/nishanths/license
+``` 
+
+Create licenses from the command-line.
 
 * Supports all the licenses available on GitHub
 * Does not need network access (except on first run)
@@ -11,16 +15,6 @@ Create licenses from the command-line. *Hello, productivity!*
 <br>
 <img src="https://zippy.gfycat.com/JoyfulBlandGermanshorthairedpointer.gif" width="700px"/>
 <br>
-
-## Install
-
-Using go:
-
-```
-go get -u github.com/nishanths/license
-``` 
-
-[more info](https://golang.org/doc/install#install)
 
 ## Usage
 

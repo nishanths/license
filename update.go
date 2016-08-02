@@ -150,8 +150,8 @@ func handleAPIError(err error) error {
 	case license.StatusError:
 		if e.StatusCode == 403 && strings.Contains(e.Details.Message, "API rate limit") {
 			return fmt.Errorf("%s\n\n%s\n%s", e.Error(),
-				`use a GitHub personal access token with the "-auth" flag.`,
-				`see https://github.com/settings/tokens and "license -help" for more details.`)
+				`Use a GitHub personal access token with the "-auth" flag.`,
+				`See https://github.com/settings/tokens and "license -help" for more details.`)
 		}
 		return err
 	default:
