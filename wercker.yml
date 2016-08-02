@@ -32,8 +32,11 @@ build:
         code: |
           go get -v github.com/nishanths/license
 
-    # Test the project
+    # Test the project (exit code)
     - script:
         name: run
         code: |
           license -version
+          license -update
+          license -list
+          license mit
