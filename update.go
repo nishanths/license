@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"path"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -32,8 +31,8 @@ func prepareTempDir() (string, error) {
 		return "", err
 	}
 
-	data := path.Join(tempRoot, "data")
-	tmpl := path.Join(data, "tmpl")
+	data := filepath.Join(tempRoot, "data")
+	tmpl := filepath.Join(data, "tmpl")
 
 	if err := os.MkdirAll(tmpl, 0700); err != nil {
 		os.RemoveAll(tempRoot)
@@ -131,7 +130,7 @@ func doUpdate() error {
 		}
 	}
 
-	licensePath := path.Join(home, ".license")
+	licensePath := filepath.Join(home, ".license")
 	if err := os.RemoveAll(licensePath); err != nil {
 		return err
 	}
