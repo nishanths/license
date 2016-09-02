@@ -8,7 +8,7 @@ go get -u github.com/nishanths/license
 
 Create licenses from the command-line.
 
-* Supports all the licenses available on GitHub
+* Supports [all the licenses available on GitHub](https://developer.github.com/v3/licenses/)
 * Does not need network access (except on first run)
 * Good defaults for name and year on the license; easy to customize when needed
 
