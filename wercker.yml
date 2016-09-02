@@ -37,6 +37,6 @@ build:
         name: run
         code: |
           license -version
-          license -update
+          license -auth nishanths:$GH_TOKEN -update
           license -list
           license mit
