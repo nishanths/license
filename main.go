@@ -138,15 +138,15 @@ func name() string {
 		return n
 	}
 	n, err = gitconfig.Global("user.name")
-	if err != nil {
+	if err == nil {
 		return n
 	}
 	n, err = hgconfig.Username()
-	if err != nil {
+	if err == nil {
 		return n
 	}
 	usr, err := user.Current()
-	if err != nil {
+	if err == nil {
 		return usr.Name
 	}
 	return ""
