@@ -6,7 +6,6 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/mitchellh/go-homedir"
 )
@@ -30,17 +29,13 @@ func generate() {
 }
 
 func doGenerate() error {
-	flags.License = strings.ToLower(flags.License)
+	if err := ensureExists(); err != nil {
+		return err
+	}
 
 	home, err := homedir.Dir()
 	if err != nil {
 		return err
-	}
-
-	if _, err := os.Stat(filepath.Join(home, ".license")); os.IsNotExist(err) {
-		if err := doUpdate(); err != nil {
-			return err
-		}
 	}
 
 	p := filepath.Join(home, ".license", "data", "tmpl", flags.License+".tmpl")

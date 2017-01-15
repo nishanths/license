@@ -1,21 +1,23 @@
 package main
 
 import (
-	"errors"
 	"flag"
 	"log"
 	"os"
 	"os/user"
+	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 
+	homedir "github.com/mitchellh/go-homedir"
 	"github.com/nishanths/go-hgconfig"
 	"github.com/tcnksm/go-gitconfig"
 )
 
 const (
 	nameEnv       = "LICENSE_FULL_NAME"
-	versionString = "1.0.0"
+	versionString = "1.0.1"
 	usageString   = "license [FLAGS] [LICENSE NAME]"
 	helpString    = `usage: ` + usageString + `
 
@@ -31,7 +33,7 @@ Flags:
 
 Examples:
   license mit 
-  license -name Alice isc
+  license -name Alice bsd-3-clause
   license -o LICENSE.txt mpl-2.0`
 )
 
@@ -69,12 +71,7 @@ func setupFlags() {
 
 }
 
-var ErrMissingArg = errors.New("error: require license name")
-
 func checkFlags() error {
-	if flags.License == "" && !(flags.Update || flags.Version || flags.Help || flags.List) {
-		return ErrMissingArg
-	}
 	return nil
 }
 
@@ -83,11 +80,10 @@ func main() {
 	flag.Usage = usage
 	flag.Parse()
 
-	flags.License = flag.Arg(0)
+	flags.License = strings.ToLower(flag.Arg(0))
 
-	if err := checkFlags(); err != nil {
-		errLogger.Println(err)
-		usage()
+	if flags.License == "" && !(flags.Update || flags.Version || flags.Help || flags.List) {
+		help()
 		os.Exit(1)
 	}
 
@@ -154,4 +150,23 @@ func name() string {
 
 func year() string {
 	return strconv.Itoa(time.Now().Year())
+}
+
+func ensureExists() error {
+	home, err := homedir.Dir()
+	if err != nil {
+		return err
+	}
+
+	_, err = os.Stat(filepath.Join(home, ".license"))
+
+	switch {
+	case os.IsNotExist(err):
+		if e := doUpdate(); e != nil {
+			return e
+		}
+		return nil
+	default:
+		return err
+	}
 }

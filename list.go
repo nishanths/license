@@ -29,6 +29,11 @@ func printList(l []license.License) {
 // list prints a list of locally available licenses
 // and exits.
 func list() {
+	if err := ensureExists(); err != nil {
+		errLogger.Println(err)
+		os.Exit(1)
+	}
+
 	h, err := homedir.Dir()
 	if err != nil {
 		errLogger.Println(err)
