@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	"html/template"
 	"io"
 	"os"
 	"path/filepath"
+	"text/template"
 
 	"github.com/mitchellh/go-homedir"
 )
