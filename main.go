@@ -32,7 +32,7 @@ Flags:
    -y, -year     year on license (default %q)
 
 Examples:
-  license mit 
+  license mit
   license -name Alice bsd-3-clause
   license -o LICENSE.txt mpl-2.0`
 )
@@ -68,7 +68,6 @@ func setupFlags() {
 	flag.BoolVar(&flags.Help, "help", false, "print help")
 	flag.BoolVar(&flags.List, "list", false, "print available licenses")
 	flag.BoolVar(&flags.Update, "update", false, "get latest licenses")
-
 }
 
 func checkFlags() error {
