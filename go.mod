@@ -1,7 +1,7 @@
 module github.com/nishanths/license
 
 require (
-	github.com/mitchellh/go-homedir v0.0.0-20160621174243-756f7b183b7a
+	github.com/ProtonMail/go-appdir v0.0.0-20190108193441-8d7e66f88332
 	github.com/nishanths/go-hgconfig v1.0.1
 	github.com/onsi/ginkgo v1.7.0 // indirect
 	github.com/onsi/gomega v1.4.3 // indirect

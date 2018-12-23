@@ -11,7 +11,6 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/mitchellh/go-homedir"
 	"github.com/nishanths/license/pkg/license"
 	shutil "github.com/termie/go-shutil"
 )
@@ -31,8 +30,7 @@ func prepareTempDir() (string, error) {
 		return "", err
 	}
 
-	data := filepath.Join(tempRoot, "data")
-	tmpl := filepath.Join(data, "tmpl")
+	tmpl := filepath.Join(tempRoot, "tmpl")
 
 	if err := os.MkdirAll(tmpl, 0700); err != nil {
 		os.RemoveAll(tempRoot)
@@ -43,13 +41,6 @@ func prepareTempDir() (string, error) {
 }
 
 func doUpdate() error {
-	// Exit early if we cannot find home directory.
-
-	home, err := homedir.Dir()
-	if err != nil {
-		return err
-	}
-
 	// Work in a temporary directory, then
 	// copy to the home directory.
 
@@ -80,7 +71,7 @@ func doUpdate() error {
 		return handleAPIError(err)
 	}
 
-	f, err := os.Create(filepath.Join(tempRoot, "data", "licenses.json"))
+	f, err := os.Create(filepath.Join(tempRoot, "licenses.json"))
 	if err != nil {
 		return err
 	}
@@ -110,7 +101,7 @@ func doUpdate() error {
 
 			content := textTemplate(l.Body)
 			tmplFile, err := os.Create(filepath.Join(
-				tempRoot, "data", "tmpl", strings.ToLower(l.Key)+".tmpl",
+				tempRoot, "tmpl", strings.ToLower(l.Key)+".tmpl",
 			))
 			if err != nil {
 				errs[i] = err
@@ -130,11 +121,10 @@ func doUpdate() error {
 		}
 	}
 
-	licensePath := filepath.Join(home, ".license")
-	if err := os.RemoveAll(licensePath); err != nil {
+	if err := os.RemoveAll(appDataDir); err != nil {
 		return err
 	}
-	return shutil.CopyTree(tempRoot, licensePath, nil)
+	return shutil.CopyTree(tempRoot, appDataDir, nil)
 }
 
 // handleAPIError handles HTTP errors as a special case:

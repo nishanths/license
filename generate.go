@@ -6,15 +6,13 @@ import (
 	"os"
 	"path/filepath"
 	"text/template"
-
-	"github.com/mitchellh/go-homedir"
 )
 
-type UnknownLicenseError struct {
+type unknownLicenseError struct {
 	License string
 }
 
-func (e UnknownLicenseError) Error() string {
+func (e unknownLicenseError) Error() string {
 	return fmt.Sprintf(`error: unknown license %q
 see 'license -list' for the list of available licenses`, e.License)
 }
@@ -32,17 +30,11 @@ func doGenerate() error {
 	if err := ensureExists(); err != nil {
 		return err
 	}
-
-	home, err := homedir.Dir()
-	if err != nil {
-		return err
-	}
-
-	p := filepath.Join(home, ".license", "data", "tmpl", flags.License+".tmpl")
+	p := filepath.Join(appDataDir, "tmpl", flags.License+".tmpl")
 	t, err := template.ParseFiles(p)
 	if err != nil {
 		if os.IsNotExist(err) {
-			return UnknownLicenseError{flags.License}
+			return unknownLicenseError{flags.License}
 		}
 		return err
 	}

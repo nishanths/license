@@ -5,14 +5,13 @@ import (
 	"log"
 	"os"
 	"os/user"
-	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
 
-	homedir "github.com/mitchellh/go-homedir"
-	"github.com/nishanths/go-hgconfig"
-	"github.com/tcnksm/go-gitconfig"
+	appdir "github.com/ProtonMail/go-appdir"
+	hgconfig "github.com/nishanths/go-hgconfig"
+	gitconfig "github.com/tcnksm/go-gitconfig"
 )
 
 const (
@@ -38,9 +37,10 @@ Examples:
 )
 
 var (
-	logger    = log.New(os.Stdout, "", 0)
-	errLogger = log.New(os.Stderr, "", 0)
-	flags     = struct {
+	logger     = log.New(os.Stdout, "", 0)
+	errLogger  = log.New(os.Stderr, "", log.Lshortfile)
+	appDataDir = appdir.New("license").UserData()
+	flags      = struct {
 		License string // Type of license.
 		Name    string // Name on license.
 		Year    string // Year on license.
@@ -152,20 +152,12 @@ func year() string {
 }
 
 func ensureExists() error {
-	home, err := homedir.Dir()
-	if err != nil {
-		return err
-	}
-
-	_, err = os.Stat(filepath.Join(home, ".license"))
-
-	switch {
-	case os.IsNotExist(err):
+	_, err := os.Stat(appDataDir)
+	if os.IsNotExist(err) {
 		if e := doUpdate(); e != nil {
 			return e
 		}
 		return nil
-	default:
-		return err
 	}
+	return err
 }

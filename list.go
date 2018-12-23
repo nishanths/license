@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 	"sort"
 
-	"github.com/mitchellh/go-homedir"
 	"github.com/nishanths/license/pkg/license"
 )
 
@@ -33,14 +32,7 @@ func list() {
 		errLogger.Println(err)
 		os.Exit(1)
 	}
-
-	h, err := homedir.Dir()
-	if err != nil {
-		errLogger.Println(err)
-		os.Exit(1)
-	}
-
-	p := filepath.Join(h, ".license", "data", "licenses.json")
+	p := filepath.Join(appDataDir, "licenses.json")
 	if _, err := os.Stat(p); err != nil {
 		errLogger.Println(err)
 		os.Exit(1)
