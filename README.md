@@ -1,15 +1,7 @@
-# license [![wercker status](https://app.wercker.com/status/1407b8c71c720358bf15eeb5815f99bd/s "wercker status")](https://app.wercker.com/project/bykey/1407b8c71c720358bf15eeb5815f99bd)
+`license` is a command line tool to create LICENSE files. 
 
-## Install
-
-```
-go get github.com/nishanths/license
-``` 
-
-Create LICENSE files from the command-line. 
-
-* Good defaults for name and year on license; easy to customize when needed
-* Supports all license types available on [GitHub](https://developer.github.com/v3/licenses/).
+It provides good defaults for name and year on license (customizable if needed), and
+it supports all license types available on [GitHub](https://developer.github.com/v3/licenses/).
 ```
 agpl-3.0      (GNU Affero General Public License v3.0)
 apache-2.0    (Apache License 2.0)
@@ -26,9 +18,11 @@ mpl-2.0       (Mozilla Public License 2.0)
 unlicense     (The Unlicense)
 ```
 
-<br>
-<img src="https://zippy.gfycat.com/JoyfulBlandGermanshorthairedpointer.gif" width="700px"/>
-<br>
+## Install
+
+```
+go get github.com/nishanths/license
+``` 
 
 ## Usage
 
@@ -52,7 +46,7 @@ $ license mit > LICENSE.txt
 #### Customize name and year
 
 ```
-$ license -year 2013 -name "Alice G" isc
+$ license -year 2013 -name "Alice L" isc
 ```
 
 The current year is used if `-year` is omitted.
@@ -69,9 +63,9 @@ To determine the name on the license, the following are used in this order:
 
 If you have your name set in `$HOME/.gitconfig`, you can almost always omit the `-name` flag.
 
-### Help
+#### Demo
 
-Help is available by runnning `license -help`
+<img src="https://zippy.gfycat.com/JoyfulBlandGermanshorthairedpointer.gif" width="700px"/>
 
 ## Contributing
 

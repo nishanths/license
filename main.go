@@ -29,7 +29,7 @@ Flags:
 
 Examples:
   license mit 
-  license -name "Alice G" -year 2013 bsd-3-clause
+  license -name "Alice L" -year 2013 bsd-3-clause
   license -o LICENSE.txt mpl-2.0`
 )
 
