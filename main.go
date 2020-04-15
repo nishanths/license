@@ -94,12 +94,10 @@ func run() {
 
 func printVersion() {
 	stdout.Printf("%s", versionString)
-	os.Exit(0)
 }
 
 func printUsage() {
 	stderr.Printf(usageString, getName(), getYear())
-	os.Exit(0)
 }
 
 func getName() string {
