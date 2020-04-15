@@ -29,8 +29,8 @@ Flags:
 
 Examples:
   license mit 
-  license -name=Alice -year=2013 bsd-3-clause
-  license -o=LICENSE.txt mpl-2.0`
+  license -name "Alice G" -year 2013 bsd-3-clause
+  license -o LICENSE.txt mpl-2.0`
 )
 
 var (
