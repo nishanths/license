@@ -1,16 +1,15 @@
-# [license](https://github.com/nishanths/license) [![wercker status](https://app.wercker.com/status/1407b8c71c720358bf15eeb5815f99bd/s "wercker status")](https://app.wercker.com/project/bykey/1407b8c71c720358bf15eeb5815f99bd)
+# license [![wercker status](https://app.wercker.com/status/1407b8c71c720358bf15eeb5815f99bd/s "wercker status")](https://app.wercker.com/project/bykey/1407b8c71c720358bf15eeb5815f99bd)
 
 ## Install
 
 ```
-go get -u github.com/nishanths/license
+go get github.com/nishanths/license
 ``` 
 
-Create licenses from the command-line.
+Create LICENSE files from the command-line.
 
-* Supports [all the licenses available on GitHub](https://developer.github.com/v3/licenses/)
-* Does not need network access (except on first run)
-* Good defaults for name and year on the license; easy to customize when needed
+* Supports all the [licenses available on GitHub](https://developer.github.com/v3/licenses/)
+* Good defaults for name and year on license; easy to customize when needed
 
 <br>
 <img src="https://zippy.gfycat.com/JoyfulBlandGermanshorthairedpointer.gif" width="700px"/>
@@ -18,31 +17,32 @@ Create licenses from the command-line.
 
 ## Usage
 
-#### Generate a license
+#### Print license
 
-To print a license to stdout, run `license` followed by the license name:
+To print a license to stdout, run the `license` command followed by the license name:
 
 ```
-license mit
+$ license mit
 ```
 
 #### Save to file
 
-Use the `-o` flag to save the license to a file:
+Use the `-o` flag to save the license to a file, or use your shell's redirection operator:
 
 ```
-license -o LICENSE.txt mit
+$ license -o=LICENSE.txt mit
+$ license mit > LICENSE.txt
 ```
 
 #### Customize name and year
 
 ```
-license -year=2013 -name=Alice isc
+$ license -year=2013 -name=Alice isc
 ```
 
-If unspecified, the current year is used.
+The current year is used if `-year` is omitted.
 
-To determine the name, license uses the following in order. Since you likely have your name set in `.gitconfig`, you can always omit the `-name` flags.
+To determine the name on the license, the following are used in this order:
 
 ```
 - command line flags: -name, -n
@@ -52,22 +52,18 @@ To determine the name, license uses the following in order. Since you likely hav
 - empty string
 ```
 
-## Authentication
+If you have your name set in `$HOME/.gitconfig`, you can almost always omit the `-name` flag.
 
-If you receive a `403 Forbidden: API rate limit exceeded` while updating licenses, use your GitHub username and a [personal access token](https://github.com/settings/tokens) (no scopes required).
+### List of licenses
 
 ```
-license -auth username:e0a8a01b1f125a785ea3d7ada98eb6a018e2fe4f -update
+$ license -list
+
 ```
 
-(The token above will not work.)
-
-## More docs
+### Help
 
 Help is available by runnning `license -help`
-
-View the list of available licenses by running `license -list`
-
 
 ## Contributing
 

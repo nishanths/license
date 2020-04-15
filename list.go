@@ -1,65 +1,28 @@
 package main
 
-import (
-	"encoding/json"
-	"os"
-	"path/filepath"
-	"sort"
-
-	"github.com/mitchellh/go-homedir"
-	"github.com/nishanths/license/pkg/license"
+var (
+	licensesList = []struct {
+		key      string
+		longName string
+	}{
+		{"agpl-3.0", "GNU Affero General Public License v3.0"},
+		{"apache-2.0", "Apache License 2.0"},
+		{"bsd-2-clause", "BSD 2-Clause \"Simplified\" License"},
+		{"bsd-3-clause", "BSD 3-Clause \"New\" or \"Revised\" License"},
+		{"cc0-1.0", "Creative Commons Zero v1.0 Universal"},
+		{"epl-2.0", "Eclipse Public License 2.0"},
+		{"gpl-2.0", "GNU General Public License v2.0"},
+		{"gpl-3.0", "GNU General Public License v3.0"},
+		{"lgpl-2.1", "GNU Lesser General Public License v2.1"},
+		{"lgpl-3.0", "GNU Lesser General Public License v3.0"},
+		{"mit", "MIT License"},
+		{"mpl-2.0", "Mozilla Public License 2.0"},
+		{"unlicense", "The Unlicense"},
+	}
 )
 
-// ByKey impelements sort.Interface to sort
-// License by the Key field.
-type ByKey []license.License
-
-func (a ByKey) Len() int           { return len(a) }
-func (a ByKey) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a ByKey) Less(i, j int) bool { return a[i].Key < a[j].Key }
-
-// printList prints the supplied list of licenses to stdout.
-func printList(l []license.License) {
-	logger.Println("Available licenses:")
-	for _, l := range l {
-		logger.Printf("  %-14s(%s)\n", l.Key, l.Name)
+func printList() {
+	for _, l := range licensesList {
+		stdout.Printf("%-14s(%s)", l.key, l.longName)
 	}
-}
-
-// list prints a list of locally available licenses
-// and exits.
-func list() {
-	if err := ensureExists(); err != nil {
-		errLogger.Println(err)
-		os.Exit(1)
-	}
-
-	h, err := homedir.Dir()
-	if err != nil {
-		errLogger.Println(err)
-		os.Exit(1)
-	}
-
-	p := filepath.Join(h, ".license", "data", "licenses.json")
-	if _, err := os.Stat(p); err != nil {
-		errLogger.Println(err)
-		os.Exit(1)
-	}
-
-	r, err := os.Open(p)
-	if err != nil {
-		errLogger.Println("failed to open licenses.json", err)
-		os.Exit(1)
-	}
-	defer r.Close()
-
-	var lics []license.License
-	if err := json.NewDecoder(r).Decode(&lics); err != nil {
-		errLogger.Println("failed to decode licenses.json", err)
-		os.Exit(1)
-	}
-
-	sort.Sort(ByKey(lics))
-	printList(lics)
-	os.Exit(0)
 }
