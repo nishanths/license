@@ -17,11 +17,11 @@ const (
 	nameEnv       = "LICENSE_FULL_NAME"
 	versionString = "2.0.0"
 
-	usageString = `Usage: license [flags] <license-name>
+	usageString = `Usage: license [flags] [license-type]
 
 Flags:
        -help     print help information
-       -list     print list of available licenses
+       -list     print list of available license types
    -n, -name     full name to use on license (default %q)
    -o, -output   path to output file (prints to stdout if unspecified)
        -version  print version
