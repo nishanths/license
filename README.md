@@ -1,7 +1,7 @@
 `license` is a command line tool to create LICENSE files.
 
 It provides good defaults for name and year on license (customizable if needed), and
-it supports all license types listed on the [GitHub Licenses API](https://developer.github.com/v3/licenses/). The license templates used by this program are copied from the GitHub Licenses API.
+it supports all license types listed on the [GitHub Licenses API](https://developer.github.com/v3/licenses/) and a few more. The license templates used by this program are copied from the GitHub Licenses API, when available.
 ```
 agpl-3.0      (GNU Affero General Public License v3.0)
 apache-2.0    (Apache License 2.0)
@@ -9,6 +9,7 @@ bsd-2-clause  (BSD 2-Clause "Simplified" License)
 bsd-3-clause  (BSD 3-Clause "New" or "Revised" License)
 cc0-1.0       (Creative Commons Zero v1.0 Universal)
 epl-2.0       (Eclipse Public License 2.0)
+free-art-1.3  (Free Art License 1.3)
 gpl-2.0       (GNU General Public License v2.0)
 gpl-3.0       (GNU General Public License v3.0)
 lgpl-2.1      (GNU Lesser General Public License v2.1)
@@ -21,7 +22,7 @@ unlicense     (The Unlicense)
 ## Install
 
 ```
-go get github.com/nishanths/license
+go get github.com/nishanths/license/v4
 ```
 
 ## Usage

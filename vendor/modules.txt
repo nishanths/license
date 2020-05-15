@@ -1,4 +1,4 @@
-# github.com/jteeuwen/go-bindata v3.0.7+incompatible
+# github.com/kevinburke/go-bindata v3.19.0+incompatible
 ## explicit
 # github.com/nishanths/go-hgconfig v1.0.1
 ## explicit
