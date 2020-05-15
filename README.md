@@ -21,7 +21,7 @@ unlicense     (The Unlicense)
 ## Install
 
 ```
-go get github.com/nishanths/license/v3
+go get github.com/nishanths/license
 ```
 
 ## Usage
