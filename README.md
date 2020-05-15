@@ -1,4 +1,4 @@
-`license` is a command line tool to create LICENSE files. 
+`license` is a command line tool to create LICENSE files.
 
 It provides good defaults for name and year on license (customizable if needed), and
 it supports all license types listed on the [GitHub Licenses API](https://developer.github.com/v3/licenses/). The license templates used by this program are copied from the GitHub Licenses API.
@@ -21,8 +21,8 @@ unlicense     (The Unlicense)
 ## Install
 
 ```
-go get github.com/nishanths/license
-``` 
+go get github.com/nishanths/license/v3
+```
 
 ## Usage
 
