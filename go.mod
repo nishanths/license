@@ -1,4 +1,4 @@
-module github.com/nishanths/license/v4
+module github.com/nishanths/license
 
 go 1.14
 
