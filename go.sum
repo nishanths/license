@@ -1,6 +1,0 @@
-github.com/kevinburke/go-bindata v3.19.0+incompatible h1:iB9FY0D/WyDVmzrfVbDKQJqtt653re1Ek0W+XobkhUU=
-github.com/kevinburke/go-bindata v3.19.0+incompatible/go.mod h1:/pEEZ72flUW2p0yi30bslSp9YqD9pysLxunQDdb2CPM=
-github.com/nishanths/go-hgconfig v1.0.1 h1:PTxvVU28Q1E4pfscFsrFJ3M2jePaklQ8NI/kPbtAGT4=
-github.com/nishanths/go-hgconfig v1.0.1/go.mod h1:BxAx1BFaeCLA8rRzyF87wlhyrsOzJ/RCVhHS8UIt1wQ=
-github.com/tcnksm/go-gitconfig v0.1.2 h1:iiDhRitByXAEyjgBqsKi9QU4o2TNtv9kPP3RgPgXBPw=
-github.com/tcnksm/go-gitconfig v0.1.2/go.mod h1:/8EhP4H7oJZdIPyT+/UIsG87kTzrzM4UsLGSItWYCpE=
