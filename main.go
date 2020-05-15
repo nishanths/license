@@ -15,7 +15,7 @@ import (
 
 const (
 	nameEnv       = "LICENSE_FULL_NAME"
-	versionString = "v4"
+	versionString = "v5"
 
 	usageString = `Usage: license [flags] [license-type]
 
