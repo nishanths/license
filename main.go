@@ -15,7 +15,7 @@ import (
 
 const (
 	nameEnv       = "LICENSE_FULL_NAME"
-	versionString = "2.0.0"
+	versionString = "3.0.0"
 
 	usageString = `Usage: license [flags] [license-type]
 
@@ -28,7 +28,7 @@ Flags:
    -y, -year     year to use on license (default %q)
 
 Examples:
-  license mit 
+  license mit
   license -name "Alice L" -year 2013 bsd-3-clause
   license -o LICENSE.txt mpl-2.0`
 )
