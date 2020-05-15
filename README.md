@@ -1,7 +1,7 @@
 `license` is a command line tool to create LICENSE files.
 
 It provides good defaults for name and year on license (customizable if needed), and
-it supports all license types listed on the [GitHub Licenses API](https://developer.github.com/v3/licenses/) and a few more. The license templates used by this program are copied from the GitHub Licenses API, when available.
+it supports all license types listed on the [GitHub Licenses API](https://developer.github.com/v3/licenses/) and a few more. The license templates used by this program were copied from the GitHub Licenses API, when available.
 ```
 agpl-3.0      (GNU Affero General Public License v3.0)
 apache-2.0    (Apache License 2.0)
