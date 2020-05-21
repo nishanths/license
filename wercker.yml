@@ -30,7 +30,7 @@ build:
     - script:
         name: go get
         code: |
-          go get github.com/nishanths/license
+          go get github.com/nishanths/license/v5
 
     # Test the project (exit code)
     - script:
