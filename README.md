@@ -21,10 +21,17 @@ unlicense     (The Unlicense)
 
 ## Install
 
+Outside a project using Go modules, get the latest version by running:
+
 ```
 go get github.com/nishanths/license
 ```
 
+Inside a project using Go modules, use:
+
+```
+go get github.com/nishanths/license/v5
+```
 
 ## Usage
 
