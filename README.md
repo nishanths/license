@@ -21,6 +21,8 @@ unlicense     (The Unlicense)
 
 ## Install
 
+### Building from Source
+
 Outside a project using Go modules, get the latest version by running:
 
 ```
@@ -31,6 +33,14 @@ Inside a project using Go modules, use:
 
 ```
 go get github.com/nishanths/license/v5
+```
+
+### Via the Arch User Repository (AUR)
+
+This program is available via the AUR under the name [`nishanths-license-git`](https://aur.archlinux.org/packages/nishanths-license-git/). Using yay, you can install it like so:
+
+```bash
+yay -S nishanths-license-git
 ```
 
 ## Usage
