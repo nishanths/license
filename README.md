@@ -84,7 +84,7 @@ If you have your name set in `$HOME/.gitconfig`, you can almost always omit the 
 
 #### Demo
 
-<img src="https://zippy.gfycat.com/JoyfulBlandGermanshorthairedpointer.gif" width="700px"/>
+![Demonstration](demo.gif)
 
 ## Contributing
 
