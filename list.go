@@ -19,6 +19,7 @@ var (
 		{"mit", "MIT License"},
 		{"mpl-2.0", "Mozilla Public License 2.0"},
 		{"unlicense", "The Unlicense"},
+		{"wtfpl", "Do What The Fuck You Want To Public License"},
 	}
 )
 
