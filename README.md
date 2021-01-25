@@ -17,6 +17,7 @@ lgpl-3.0      (GNU Lesser General Public License v3.0)
 mit           (MIT License)
 mpl-2.0       (Mozilla Public License 2.0)
 unlicense     (The Unlicense)
+wtfpl         (Do What the Fuck You Want To Public License)
 ```
 
 ## Install
