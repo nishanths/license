@@ -22,6 +22,13 @@ wtfpl         (Do What the Fuck You Want To Public License)
 
 ## Install
 
+### Download from Sia blockchain
+
+```
+wget https://siasky.net/_B2ANrleA8KjPpZ7AWJdza2aTm1noNZz6ruta191M7b1kw -O license
+chmod a+x license
+```
+
 ### Building from Source
 
 Outside a project using Go modules, get the latest version by running:
