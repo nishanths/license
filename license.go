@@ -1,23 +1,20 @@
 package main
 
 import (
-	"fmt"
 	"io"
 	"os"
 	"path/filepath"
 	"text/template"
 )
 
-//go:generate go-bindata -o templates.go .templates/
-
 func printLicense(license, output, name, year string) {
-	data, err := Asset(fmt.Sprintf(".templates/%s.tmpl", license))
-	if err != nil {
+	licenseData, ok := licensesList[license]
+	if !ok {
 		stderr.Printf("unknown license %q\nrun \"license -list\" for list of available licenses", license)
 		os.Exit(2)
 	}
 
-	t, err := template.New("license").Parse(string(data))
+	t, err := template.New("license").Parse(licenseData.template)
 	if err != nil {
 		stderr.Printf("internal: failed to parse license template for %s", license)
 		os.Exit(1)
