@@ -8,7 +8,11 @@ import (
 	"text/template"
 )
 
+<<<<<<< HEAD
 var licenses = map[string]struct {
+=======
+var knownLicenses = map[string]struct {
+>>>>>>> Duplicate licensesList from list.go
 	longName string
 	template string
 }{
@@ -30,6 +34,7 @@ var licenses = map[string]struct {
 }
 
 func printList() {
+<<<<<<< HEAD
 	keys := make([]string, 0, len(licenses))
 
 	for key := range licenses {
@@ -40,11 +45,19 @@ func printList() {
 
 	for _, key := range keys {
 		stdout.Printf("%-14s(%s)", key, licenses[key].longName)
+=======
+	for key, license := range knownLicenses {
+		stdout.Printf("%-14s(%s)", key, license.longName)
+>>>>>>> Duplicate licensesList from list.go
 	}
 }
 
 func printLicense(license, output, name, year string) {
+<<<<<<< HEAD
 	file, ok := licenses[license]
+=======
+	licenseData, ok := knownLicenses[license]
+>>>>>>> Duplicate licensesList from list.go
 	if !ok {
 		stderr.Printf("unknown license %q\nrun \"license -list\" for list of available licenses", license)
 		os.Exit(2)
