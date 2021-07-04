@@ -3,21 +3,12 @@ package main
 import (
 	"io"
 	"os"
-	"sort"
 	"path/filepath"
 	"sort"
 	"text/template"
 )
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 var licenses = map[string]struct {
-=======
-var knownLicenses = map[string]struct {
->>>>>>> Duplicate licensesList from list.go
-=======
-var licenses = map[string]struct {
->>>>>>> Rename knownLicenses to simply licenses
 	longName string
 	template string
 }{
@@ -39,50 +30,21 @@ var licenses = map[string]struct {
 }
 
 func printList() {
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 	keys := make([]string, 0, len(licenses))
 
 	for key := range licenses {
 		keys = append(keys, key)
 	}
 
-=======
-	keys := make([]string, 0, len(licenses))
-	
-	for key := range(licenses) {
-		keys = apppend(keys, key)
-	}
-	
->>>>>>> Sort the license printing by key
 	sort.Strings(keys)
 
 	for _, key := range keys {
 		stdout.Printf("%-14s(%s)", key, licenses[key].longName)
-<<<<<<< HEAD
-=======
-	for key, license := range knownLicenses {
-=======
-	for key, license := range licenses {
->>>>>>> Rename knownLicenses to simply licenses
-		stdout.Printf("%-14s(%s)", key, license.longName)
->>>>>>> Duplicate licensesList from list.go
-=======
->>>>>>> Sort the license printing by key
 	}
 }
 
 func printLicense(license, output, name, year string) {
-<<<<<<< HEAD
-<<<<<<< HEAD
 	file, ok := licenses[license]
-=======
-	licenseData, ok := knownLicenses[license]
->>>>>>> Duplicate licensesList from list.go
-=======
-	licenseData, ok := licenses[license]
->>>>>>> Rename knownLicenses to simply licenses
 	if !ok {
 		stderr.Printf("unknown license %q\nrun \"license -list\" for list of available licenses", license)
 		os.Exit(2)
