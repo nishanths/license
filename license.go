@@ -9,10 +9,14 @@ import (
 )
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 var licenses = map[string]struct {
 =======
 var knownLicenses = map[string]struct {
 >>>>>>> Duplicate licensesList from list.go
+=======
+var licenses = map[string]struct {
+>>>>>>> Rename knownLicenses to simply licenses
 	longName string
 	template string
 }{
@@ -35,6 +39,7 @@ var knownLicenses = map[string]struct {
 
 func printList() {
 <<<<<<< HEAD
+<<<<<<< HEAD
 	keys := make([]string, 0, len(licenses))
 
 	for key := range licenses {
@@ -47,6 +52,9 @@ func printList() {
 		stdout.Printf("%-14s(%s)", key, licenses[key].longName)
 =======
 	for key, license := range knownLicenses {
+=======
+	for key, license := range licenses {
+>>>>>>> Rename knownLicenses to simply licenses
 		stdout.Printf("%-14s(%s)", key, license.longName)
 >>>>>>> Duplicate licensesList from list.go
 	}
@@ -54,10 +62,14 @@ func printList() {
 
 func printLicense(license, output, name, year string) {
 <<<<<<< HEAD
+<<<<<<< HEAD
 	file, ok := licenses[license]
 =======
 	licenseData, ok := knownLicenses[license]
 >>>>>>> Duplicate licensesList from list.go
+=======
+	licenseData, ok := licenses[license]
+>>>>>>> Rename knownLicenses to simply licenses
 	if !ok {
 		stderr.Printf("unknown license %q\nrun \"license -list\" for list of available licenses", license)
 		os.Exit(2)
