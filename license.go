@@ -3,6 +3,7 @@ package main
 import (
 	"io"
 	"os"
+	"sort"
 	"path/filepath"
 	"sort"
 	"text/template"
@@ -40,16 +41,26 @@ var licenses = map[string]struct {
 func printList() {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	keys := make([]string, 0, len(licenses))
 
 	for key := range licenses {
 		keys = append(keys, key)
 	}
 
+=======
+	keys := make([]string, 0, len(licenses))
+	
+	for key := range(licenses) {
+		keys = apppend(keys, key)
+	}
+	
+>>>>>>> Sort the license printing by key
 	sort.Strings(keys)
 
 	for _, key := range keys {
 		stdout.Printf("%-14s(%s)", key, licenses[key].longName)
+<<<<<<< HEAD
 =======
 	for key, license := range knownLicenses {
 =======
@@ -57,6 +68,8 @@ func printList() {
 >>>>>>> Rename knownLicenses to simply licenses
 		stdout.Printf("%-14s(%s)", key, license.longName)
 >>>>>>> Duplicate licensesList from list.go
+=======
+>>>>>>> Sort the license printing by key
 	}
 }
 
