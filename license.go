@@ -7,7 +7,7 @@ import (
 	"text/template"
 )
 
-var knownLicenses = map[string]struct {
+var licenses = map[string]struct {
 	longName string
 	template string
 }{
@@ -29,13 +29,13 @@ var knownLicenses = map[string]struct {
 }
 
 func printList() {
-	for key, license := range knownLicenses {
+	for key, license := range licenses {
 		stdout.Printf("%-14s(%s)", key, license.longName)
 	}
 }
 
 func printLicense(license, output, name, year string) {
-	licenseData, ok := knownLicenses[license]
+	licenseData, ok := licenses[license]
 	if !ok {
 		stderr.Printf("unknown license %q\nrun \"license -list\" for list of available licenses", license)
 		os.Exit(2)
