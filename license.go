@@ -3,8 +3,8 @@ package main
 import (
 	"io"
 	"os"
-	"sort"
 	"path/filepath"
+	"sort"
 	"text/template"
 )
 
@@ -32,7 +32,7 @@ var licenses = map[string]struct {
 func printList() {
 	keys := make([]string, 0, len(licenses))
 
-	for key := range(licenses) {
+	for key := range licenses {
 		keys = append(keys, key)
 	}
 
