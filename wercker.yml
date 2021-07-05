@@ -1,3 +1,5 @@
+---
+
 # This references the default golang container from
 # the Docker Hub: https://registry.hub.docker.com/u/library/golang/
 # If you want Google's container you would reference google/golang
