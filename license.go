@@ -31,13 +31,8 @@ var licenses = map[string]struct {
 
 func printList() {
 	keys := make([]string, 0, len(licenses))
-<<<<<<< HEAD
 
 	for key := range licenses {
-=======
-	
-	for key := range(licenses) {
->>>>>>> Fix syntax error: undefined: apppend
 		keys = append(keys, key)
 	}
 
