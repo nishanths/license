@@ -1,4 +1,4 @@
-module github.com/nishanths/license/v5
+module github.com/yuri-norwood/license/v5
 
 go 1.16
 
