@@ -75,3 +75,8 @@ jobs:
       - uses: dingdayu/auto-go-format@v0.0.3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: creekorful/goreportcard-action@v1.0
