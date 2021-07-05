@@ -31,11 +31,11 @@ var licenses = map[string]struct {
 
 func printList() {
 	keys := make([]string, 0, len(licenses))
-	
+
 	for key := range(licenses) {
 		keys = append(keys, key)
 	}
-	
+
 	sort.Strings(keys)
 
 	for _, key := range keys {
