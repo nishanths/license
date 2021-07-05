@@ -44,13 +44,13 @@ func printList() {
 }
 
 func printLicense(license, output, name, year string) {
-	file, ok := licenses[license].template
+	file, ok := licenses[license]
 	if !ok {
 		stderr.Printf("unknown license %q\nrun \"license -list\" for list of available licenses", license)
 		os.Exit(2)
 	}
 
-	t, err := template.New("license").Parse(file)
+	t, err := template.New("license").Parse(file.template)
 	if err != nil {
 		stderr.Printf("internal: failed to parse license template for %s", license)
 		os.Exit(1)
