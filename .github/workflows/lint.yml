@@ -45,7 +45,7 @@ jobs:
           config_data: |
             extends: default
             ignore:
-              test/**/*.yml
+              vendor/**/*.yml
             rules:
               line-length: disable
               truthy:
