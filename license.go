@@ -33,7 +33,7 @@ func printList() {
 	keys := make([]string, 0, len(licenses))
 	
 	for key := range(licenses) {
-		keys = apppend(keys, key)
+		keys = append(keys, key)
 	}
 	
 	sort.Strings(keys)
