@@ -20,8 +20,8 @@ const (
 	usageString = `Usage: license [flags] [license-type]
 
 Flags:
-	-help     print help information
-	-list     print list of available license types
+	-help         print help information
+	-list         print list of available license types
 	-n, -name     full name to use on license (default %q)
 	-o, -output   path to output file (prints to stdout if unspecified)
 	-v, -version  print version
