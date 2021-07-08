@@ -20,17 +20,17 @@ const (
 	usageString = `Usage: license [flags] [license-type]
 
 Flags:
-       -help     print help information
-       -list     print list of available license types
-   -n, -name     full name to use on license (default %q)
-   -o, -output   path to output file (prints to stdout if unspecified)
-       -version  print version
-   -y, -year     year to use on license (default %q)
+	-help         print help information
+	-list         print list of available license types
+	-n, -name     full name to use on license (default %q)
+	-o, -output   path to output file (prints to stdout if unspecified)
+	-v, -version  print version
+	-y, -year     year to use on license (default %q)
 
 Examples:
-  license mit
-  license -name "Alice L" -year 2013 bsd-3-clause
-  license -o LICENSE.txt mpl-2.0`
+	license mit
+	license -name "Alice L" -year 2013 bsd-3-clause
+	license -o LICENSE.txt mpl-2.0`
 )
 
 var (
@@ -55,6 +55,7 @@ func main() {
 	flag.StringVar(&fOutput, "output", "", "path to output file")
 	flag.StringVar(&fOutput, "o", "", "path to output file")
 	flag.BoolVar(&fVersion, "version", false, "print version")
+	flag.BoolVar(&fVersion, "v", false, "print version")
 	flag.BoolVar(&fHelp, "help", false, "print help")
 	flag.BoolVar(&fList, "list", false, "print available licenses")
 
