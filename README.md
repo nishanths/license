@@ -24,6 +24,8 @@ wtfpl         (Do What the Fuck You Want To Public License)
 
 ### Building from Source
 
+With Go 1.16 or higher:
+
 ```
 go install github.com/nishanths/license/v5@latest
 ```
