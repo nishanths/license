@@ -24,37 +24,21 @@ wtfpl         (Do What the Fuck You Want To Public License)
 
 ### Building from Source
 
-Outside a project using Go modules, get the latest version by running:
-
 ```
-go get github.com/nishanths/license
-```
-
-Inside a project using Go modules, use:
-
-```
-go get github.com/nishanths/license/v5
+go install github.com/nishanths/license/v5@latest
 ```
 
 ### Via the Arch User Repository (AUR)
 
-This program is available via the AUR under the name [`nishanths-license-git`](https://aur.archlinux.org/packages/nishanths-license-git/). Using yay, you can install it like so:
+This program is available via the AUR under the name
+[`nishanths-license-git`](https://aur.archlinux.org/packages/nishanths-license-git/).
+Using yay, you can install it like so:
 
-WARNING: The authenticity of this method was last verified on 2021-07-04 by
-the maintainer(s) of the `license` project. Please verify before use.
+WARNING: The authenticity of this method was last verified on 2021-07-04
+by the maintainer(s) of the `license` project. Please verify before use.
 
 ```bash
 yay -S nishanths-license-git
-```
-
-### Download from Sia blockchain
-
-WARNING: The authenticity of this method has not been verified by the
-maintainer(s) of the `license` project. Please verify before use.
-
-```
-wget https://siasky.net/_B2ANrleA8KjPpZ7AWJdza2aTm1noNZz6ruta191M7b1kw -O license
-chmod a+x license
 ```
 
 ## Usage
