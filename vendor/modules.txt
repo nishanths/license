@@ -1,6 +1,0 @@
-# github.com/nishanths/go-hgconfig v1.0.1
-## explicit
-github.com/nishanths/go-hgconfig
-# github.com/tcnksm/go-gitconfig v0.1.2
-## explicit
-github.com/tcnksm/go-gitconfig

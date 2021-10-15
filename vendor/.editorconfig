@@ -1,2 +1,0 @@
-# Don't inherit any rules, the subdirectories here are external code 
-root = true
