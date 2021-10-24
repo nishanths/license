@@ -70,11 +70,17 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          submodules: recursive
+          ref: ${{ github.ref }}
 
-      - uses: dingdayu/auto-go-format@v0.0.3
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '^1'
+
+      - run: go fmt -x
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Auto go-fmt
 
   report:
     runs-on: ubuntu-latest
