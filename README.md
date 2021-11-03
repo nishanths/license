@@ -88,7 +88,8 @@ If you have your name set in `$HOME/.gitconfig`, you can almost always omit the 
 
 ## Contributing
 
-Pull requests for new features, bug fixes, and suggestions are welcome!
+Pull requests for new features, bug fixes, and suggestions are welcome!  Please
+create an issue for discussion before working on a substantial change.
 
 ## License
 
