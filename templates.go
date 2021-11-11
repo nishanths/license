@@ -38,6 +38,10 @@ var Gpl20Template string
 //go:embed .templates/gpl-3.0.tmpl
 var Gpl30Template string
 
+// ISCTemplate is the template for the ISC license.
+//go:embed .templates/isc.tmpl
+var ISCTemplate string
+
 // Lgpl21Template is the template for the GNU Lesser General Public License (V2).
 //go:embed .templates/lgpl-2.1.tmpl
 var Lgpl21Template string

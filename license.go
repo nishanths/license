@@ -21,6 +21,7 @@ var licenses = map[string]struct {
 	"free-art-1.3": {"Free Art License 1.3", FreeArt13Template},
 	"gpl-2.0":      {"GNU General Public License v2.0", Gpl20Template},
 	"gpl-3.0":      {"GNU General Public License v3.0", Gpl30Template},
+	"isc":          {"ISC License", ISCTemplate},
 	"lgpl-2.1":     {"GNU Lesser General Public License v2.1", Lgpl21Template},
 	"lgpl-3.0":     {"GNU Lesser General Public License v3.0", Lgpl30Template},
 	"mit":          {"MIT License", MitTemplate},
