@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"os/user"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -26,10 +27,11 @@ Flags:
 	-o, -output   path to output file (prints to stdout if unspecified)
 	-v, -version  print version
 	-y, -year     year to use on license (default %q)
+	-p, -project  your project to use on license (default %q)
 
 Examples:
 	license mit
-	license -name "Alice L" -year 2013 bsd-3-clause
+	license -name "Alice L" -year 2013 -project "myapp" bsd-4-clause
 	license -o LICENSE.txt mpl-2.0`
 )
 
@@ -41,6 +43,7 @@ var (
 var (
 	fName    string
 	fYear    string
+	fProject string
 	fOutput  string
 	fVersion bool
 	fHelp    bool
@@ -52,13 +55,14 @@ func main() {
 	flag.StringVar(&fName, "n", "", "name on license")
 	flag.StringVar(&fYear, "year", "", "year on license")
 	flag.StringVar(&fYear, "y", "", "year on license")
+	flag.StringVar(&fProject, "project", "", "project name on license")
+	flag.StringVar(&fProject, "p", "", "project name on license")
 	flag.StringVar(&fOutput, "output", "", "path to output file")
 	flag.StringVar(&fOutput, "o", "", "path to output file")
 	flag.BoolVar(&fVersion, "version", false, "print version")
 	flag.BoolVar(&fVersion, "v", false, "print version")
 	flag.BoolVar(&fHelp, "help", false, "print help")
 	flag.BoolVar(&fList, "list", false, "print available licenses")
-
 	flag.Usage = func() {
 		printUsage()
 		os.Exit(1)
@@ -89,7 +93,7 @@ func run() {
 
 	default:
 		license := strings.ToLower(flag.Arg(0))
-		printLicense(license, fOutput, getName(), getYear()) // internally calls os.Exit() on failure
+		printLicense(license, fOutput, getName(), getYear(), getProject()) // internally calls os.Exit() on failure
 	}
 }
 
@@ -98,7 +102,7 @@ func printVersion() {
 }
 
 func printUsage() {
-	stderr.Printf(usageString, getName(), getYear())
+	stderr.Printf(usageString, getName(), getYear(), getProject())
 }
 
 func getName() string {
@@ -133,4 +137,19 @@ func getYear() string {
 		return fYear
 	}
 	return strconv.Itoa(time.Now().Year())
+}
+
+func getProject() string {
+	if fProject != "" {
+		return fProject
+	}
+	dir, err := os.Getwd()
+	if err != nil {
+		return ""
+	}
+	rootDir, err := filepath.Abs(dir)
+	if err != nil {
+		return ""
+	}
+	return filepath.Base(rootDir)
 }
