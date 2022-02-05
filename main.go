@@ -143,9 +143,13 @@ func getProject() string {
 	if fProject != "" {
 		return fProject
 	}
-	rootDir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	dir, err := os.Getwd()
 	if err != nil {
 		return ""
 	}
-	return strings.Split(strings.ReplaceAll(rootDir, "\\", "/"), "/")[len(strings.Split(strings.ReplaceAll(rootDir, "\\", "/"), "/"))-1]
+	rootDir, err := filepath.Abs(dir)
+	if err != nil {
+		return ""
+	}
+	return filepath.Base(rootDir)
 }
