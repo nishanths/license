@@ -18,7 +18,7 @@ var Al20Template string
 //go:embed .templates/apache-2.0.tmpl
 var Apache20Template string
 
-// Bsd0Template is the template for the BSD Zero Clause License.
+// Bsd0ClauseTemplate is the template for the BSD Zero Clause License.
 //go:embed .templates/bsd-0-clause.tmpl
 var Bsd0ClauseTemplate string
 
