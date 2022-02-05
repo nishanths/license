@@ -67,7 +67,7 @@ yay -S nishanths-license-git
 
 To print a license to stdout, run the `license` command followed by the license name:
 
-```powershell
+```sh
 $ license mit
 ```
 
@@ -75,14 +75,14 @@ $ license mit
 
 Use the `-o` flag to save the license to a file, or use your shell's redirection operator:
 
-```powershell
+```sh
 $ license -o LICENSE.txt mit
 $ license mit > LICENSE.txt
 ```
 
 #### Customize name, year and project name
 
-```powershell
+```sh
 $ license -year 2013 -name "Alice L" isc
 $ license -name "Alice L" -year 2022 -project "myapp" bsd-4-clause
 ```
