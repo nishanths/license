@@ -1,0 +1,30 @@
+# Documentation: https://goreleaser.com
+project_name: license
+builds:
+  - main: .
+    env:
+      - CGO_ENABLED=0
+    goarch:
+      - amd64
+      - arm64
+    goos:
+      - linux
+      - windows
+      - darwin
+    ldflags:
+      - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.builtBy=goreleaser
+checksum:
+  name_template: "SHA256SUMS.txt"
+  algorithm: sha256
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+release:
+  github:
+    owner: nishanths
+    name: license
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
