@@ -77,10 +77,10 @@ jobs:
           go-version: '^1'
 
       - run: |
-        out="$(gofmt -d .)"
-        if [ -n "$out" ]; then
+          out="$(gofmt -d .)"
+          if [ -n "$out" ]; then
             echo "$out" && exit 1
-        fi
+          fi
 
   report:
     runs-on: ubuntu-latest
