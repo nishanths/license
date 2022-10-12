@@ -76,11 +76,11 @@ jobs:
         with:
           go-version: '^1'
 
-      - run: go fmt -x
-
-      - uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: Auto go-fmt
+      - run: |
+          out="$(gofmt -s -d .)"
+          if [ -n "$out" ]; then
+            echo "$out" && exit 1
+          fi
 
   report:
     runs-on: ubuntu-latest
