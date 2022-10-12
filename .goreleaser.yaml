@@ -1,0 +1,36 @@
+---
+# Documentation: https://goreleaser.com
+project_name: license
+archives:
+  - format: binary
+    name_template: '{{ .Binary }}-{{ .Tag }}-{{ .Os }}-{{ .Arch }}{{ with .Arm }}v{{ . }}{{ end }}{{ with .Mips }}_{{ . }}{{ end }}{{ if not (eq .Amd64 "v1") }}{{ .Amd64 }}{{ end }}' # yamllint disable-line
+builds:
+  - main: .
+    env:
+      - CGO_ENABLED=0
+    goarch:
+      - amd64
+      - arm64
+    goos:
+      - linux
+      - windows
+      - darwin
+    ldflags:
+      - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.builtBy=goreleaser # yamllint disable-line
+    mod_timestamp: "{{ .CommitTimestamp }}"
+checksum:
+  name_template: "SHA256SUMS.txt"
+  algorithm: sha256
+changelog:
+  use: github
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+release:
+  github:
+    owner: nishanths
+    name: license
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"

@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/user"
 	"path/filepath"
+	"runtime"
 	"strconv"
 	"strings"
 	"time"
@@ -14,10 +15,15 @@ import (
 	"github.com/tcnksm/go-gitconfig"
 )
 
-const (
-	nameEnv       = "LICENSE_FULL_NAME"
-	versionString = "v5"
+var (
+	version = "dev"
+	commit  = ""
+	date    = ""
+	builtBy = ""
+)
 
+const (
+	nameEnv     = "LICENSE_FULL_NAME"
 	usageString = `Usage: license [flags] [license-type]
 
 Flags:
@@ -98,7 +104,18 @@ func run() {
 }
 
 func printVersion() {
-	stdout.Printf("%s", versionString)
+	stdout.Printf("license version %s", version)
+	if commit != "" {
+		stdout.Printf("commit: %s", commit)
+	}
+	if date != "" {
+		stdout.Printf("built at: %s", date)
+	}
+	if builtBy != "" {
+		stdout.Printf("built by: %s", builtBy)
+	}
+	stdout.Printf("goos: %s", runtime.GOOS)
+	stdout.Printf("goarch: %s", runtime.GOARCH)
 }
 
 func printUsage() {
