@@ -78,9 +78,9 @@ jobs:
 
       - run: go fmt -x
 
-      - uses: stefanzweifel/git-auto-commit-action@v4
+      - uses: reviewdog/action-suggester@v1
         with:
-          commit_message: Auto go-fmt
+          tool_name: gofmt
 
   report:
     runs-on: ubuntu-latest
